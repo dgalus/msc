@@ -29,12 +29,7 @@ class IPSniff:
         # The raw in (listen) socket is a L2 raw socket that listens
         # for all packets going through a specific interface.
         self.ins = socket.socket(socket.PF_PACKET, socket.SOCK_RAW, socket.htons(ETH_P_ALL))
-        ifr = ifreq()
-        ifr.ifr_ifrn = bytes(interface_name, "utf-8")
-        fcntl.ioctl(self.ins, FLAGS.SIOCGIFFLAGS, ifr)
-        ifr.ifr_flags |= FLAGS.IFF_PROMISC
-        fcntl.ioctl(self.ins, FLAGS.SIOCGIFFLAGS, ifr)
-        self.ifr = ifr
+        self.ins.ioctl(socket.SIO_RCVALL, socket.RCVALL_ON)
         self.ins.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
         self.ins.bind((self.interface_name, ETH_P_ALL))
  
