@@ -23,3 +23,5 @@ class TCPAckScanResponse(Enum):
 class UDPScanResponse(Enum):
     PORT_OPEN_OR_FILTERED = 1
     PORT_CLOSED = 2
+    
+from .ping import ping
