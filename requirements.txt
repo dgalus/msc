@@ -3,3 +3,6 @@ flask-sqlalchemy
 flask-wtf
 flask-login
 scapy-python3
+requests
+shutil
+geoip
