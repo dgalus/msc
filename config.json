@@ -13,5 +13,13 @@
     ],
     "dmz_networks" : [
         "193.47.151.0/26"
-    ]
+    ],
+    "notifications" : {
+        "mail" : {
+            "sender" : "security@example.org",
+            "recipient" : ["admin@example.org"],
+            "smtp_server" : "example.org",
+            "smtp_port" : 25
+        }
+    }
 }
