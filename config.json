@@ -21,5 +21,11 @@
             "smtp_server" : "example.org",
             "smtp_port" : 25
         }
+    },
+    "redis" : {
+        "ip" : "127.0.0.1",
+        "port" : 6379,
+        "use_ssl" : false,
+        "password" : "foobared"
     }
 }
