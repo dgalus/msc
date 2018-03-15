@@ -27,21 +27,30 @@ class IPSniff:
         ip_dst = payload[16:20]
         proto = payload[9]
         ip_frame = payload[0:iplen]
+        ip_src_str = socket.inet_ntoa(ip_src)
+        ip_dst_str = socket.inet_ntoa(ip_dst)
         
         if proto == 6 or proto == 17:
             if dummy_hdrlen <= 5:
                 src_port = payload[20:22]
                 dest_port = payload[22:24]
+                src_port_int = struct.unpack('>H', src_port)[0]
+                dst_port_int = struct.unpack('>H', dest_port)[0]
             else:
                 st_byte = dummy_hdrlen*4
                 src_port = payload[st_byte:st_byte+2]
                 dest_port = payload[st_byte+2:st_byte+4]
-                ip_src_str = socket.inet_ntoa(ip_src)
                 src_port_int = struct.unpack('>H', src_port)[0]
-                ip_dst_str = socket.inet_ntoa(ip_dst)
                 dst_port_int = struct.unpack('>H', dest_port)[0]
-            print("%s:%d -> %s:%d" % (ip_src_str, src_port_int, ip_dst_str, dst_port_int))
-
+            key = ("%s:%d -> %s:%d" % (ip_src_str, src_port_int, ip_dst_str, dst_port_int))
+            if key in packets:
+                packets[key] += 1
+            else:
+                packets[key] = 1
+            os.system('clear')
+            for key, value in packets.items():
+                print(key + ": " + str(value))
+            
     def recv(self):
         while True:
             pkt, sa_ll = self.ins.recvfrom(MTU)
