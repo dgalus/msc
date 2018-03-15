@@ -6,3 +6,4 @@ scapy-python3
 requests
 geoip
 redis
+gunicorn

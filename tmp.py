@@ -10,7 +10,6 @@ import threading
 import time
 
 ETH_P_ALL = 0x0003
-frames_counter = 0
 
 class IPSniff:
     def __init__(self, interface_name):
@@ -79,6 +78,7 @@ def print_stats():
             print(key + ": " + str(value))
         time.sleep(1)
 
+frames_counter = 0
 packets = dict()
 q = queue.Queue()
 t = threading.Thread(target=process_packet)
