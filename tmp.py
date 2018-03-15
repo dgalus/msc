@@ -10,6 +10,7 @@ import threading
 import time
 
 ETH_P_ALL = 0x0003
+frames_counter = 0
 
 class IPSniff:
     def __init__(self, interface_name):
@@ -45,6 +46,7 @@ class IPSniff:
             q.put(key)
             
     def recv(self):
+        global frames_counter
         while True:
             pkt, sa_ll = self.ins.recvfrom(MTU)
             if len(pkt) <= 0:
@@ -69,14 +71,14 @@ def process_packet():
             packets[key] = 1
 
 def print_stats():
+    global frames_counter
     while True:
-        print("FRAMES: " + str(frames_counter))
         os.system('clear')
+        print("FRAMES: " + str(frames_counter))
         for key, value in packets.items():
             print(key + ": " + str(value))
         time.sleep(1)
 
-frames_counter = 0
 packets = dict()
 q = queue.Queue()
 t = threading.Thread(target=process_packet)
