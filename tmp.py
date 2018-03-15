@@ -55,6 +55,7 @@ class IPSniff:
                 continue
             ip_header = pkt[14:34]
             payload = pkt[14:]
+            frames_counter += 1
             self.__process_ipframe(sa_ll[2], ip_header, payload)
 
 def process_packet():
@@ -69,16 +70,18 @@ def process_packet():
 
 def print_stats():
     while True:
+        print("FRAMES: " + str(frames_counter))
         os.system('clear')
         for key, value in packets.items():
             print(key + ": " + str(value))
         time.sleep(1)
 
+frames_counter = 0
 packets = dict()
 q = queue.Queue()
 t = threading.Thread(target=process_packet)
-t.start()
 t2 = threading.Thread(target=print_stats)
+t.start()
 t2.start()
 
 ip_sniff = IPSniff(sys.argv[1])
