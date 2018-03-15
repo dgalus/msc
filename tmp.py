@@ -5,16 +5,15 @@ from scapy.all import MTU
 from scapy.config import conf
 import ctypes
 import fcntl
+import queue
+import threading
+import time
 
 ETH_P_ALL = 0x0003
 
-packets = dict()
-
 class IPSniff:
-    def __init__(self, interface_name):#, on_ip_incoming, on_ip_outgoing):
+    def __init__(self, interface_name):
         self.interface_name = interface_name
-        #self.on_ip_incoming = on_ip_incoming
-        #self.on_ip_outgoing = on_ip_outgoing
         self.ins = socket.socket(socket.PF_PACKET, socket.SOCK_RAW, socket.htons(ETH_P_ALL))
         self.ins.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2**30)
         self.ins.bind((self.interface_name, ETH_P_ALL))
@@ -43,13 +42,7 @@ class IPSniff:
                 src_port_int = struct.unpack('>H', src_port)[0]
                 dst_port_int = struct.unpack('>H', dest_port)[0]
             key = ("%s:%d -> %s:%d" % (ip_src_str, src_port_int, ip_dst_str, dst_port_int))
-            if key in packets:
-                packets[key] += 1
-            else:
-                packets[key] = 1
-            os.system('clear')
-            for key, value in packets.items():
-                print(key + ": " + str(value))
+            q.put(key)
             
     def recv(self):
         while True:
@@ -63,12 +56,33 @@ class IPSniff:
             ip_header = pkt[14:34]
             payload = pkt[14:]
             self.__process_ipframe(sa_ll[2], ip_header, payload)
- 
-def test_incoming_callback(src, dst, frame):
-    print("incoming - src=%s, dst=%s, frame len = %d" %(socket.inet_ntoa(src), socket.inet_ntoa(dst), len(frame)))
- 
-def test_outgoing_callback(src, dst, frame):
-    print("outgoing - src=%s, dst=%s, frame len = %d" %(socket.inet_ntoa(src), socket.inet_ntoa(dst), len(frame)))
- 
-ip_sniff = IPSniff(sys.argv[1])#, test_incoming_callback, test_outgoing_callback)
+
+def process_packet():
+    while True:
+        key = q.get()
+        if key is None:
+            break
+        if key in packets:
+            packets[key] += 1
+        else:
+            packets[key] = 1
+
+def print_stats():
+    while True:
+        os.system('clear')
+        for key, value in packets.items():
+            print(key + ": " + str(value))
+        time.sleep(1)
+
+packets = dict()
+q = queue.Queue()
+t = threading.Thread(target=process_packet)
+t.start()
+t2 = threading.Thread(target=print_stats)
+t2.start()
+
+ip_sniff = IPSniff(sys.argv[1])
 ip_sniff.recv()
+
+t.join()
+t2.join()
