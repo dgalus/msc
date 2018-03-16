@@ -1,5 +1,8 @@
 import socket
 
+def tcp_connect_scan(hostname):
+    pass
+
 def tcp_syn_scan(hostname):
     pass
 
