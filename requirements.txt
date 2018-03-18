@@ -8,3 +8,4 @@ geoip
 redis
 gunicorn
 bs4
+matplotlib
