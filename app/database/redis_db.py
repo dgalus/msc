@@ -1,6 +1,5 @@
 import redis
 
-
 try:
     conn = redis.StrictRedis(host='127.0.0.1', port=6379, password='foobared')
     print('Set Record:', conn.set("best_car_ever", "Tesla Model S"))
