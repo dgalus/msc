@@ -1,5 +1,5 @@
 from .. import *
 
 @app.route('/alerts', methods=['GET'])
-def index():
+def alerts():
     return render_template('alerts/index.html')
