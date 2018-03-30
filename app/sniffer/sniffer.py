@@ -17,8 +17,15 @@ class Sniffer:
         self.ins.bind((self.interface_name, ETH_P_ALL))
     
     def sniff(self):
-        pass
-    
+        while True:
+            pkt, sa_ll = self.ins.recvfrom(MTU)
+            if len(pkt) <= 0:
+                break
+            eth_header = struct.unpack("!6s6sH", pkt[0:14])
+            if eth_header[2] != 0x800 :
+                continue
+            ip_queue.put(pkt)
+            
     def __recv(self):
         pass
     
@@ -29,10 +36,13 @@ icmp_queue = queue.Queue()
 udp_queue = queue.Queue()
 tcp_queue = queue.Queue()
 
-def process_arp():
-    pass
+def process_ip(pkt):
+    while True:
+        pkt = ip_queue.get()
+        if pkt is None:
+            break
 
-def process_ip():
+def process_arp():
     pass
 
 def process_icmp():
