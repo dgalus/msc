@@ -58,6 +58,12 @@ def process_ip():
             break
         c.l3_traffic += len(pkt)
         c.l3_frames += 1
+        if pkt[23] == 1:
+            icmp_queue.put(pkt)
+        elif pkt[23] == 6:
+            tcp_queue.put(pkt)
+        elif pkt[23] == 17:
+            udp_queue.put(pkt)
         print("process_ip()")
 
 def process_arp():
@@ -94,4 +100,19 @@ def process_tcp():
         pkt = tcp_queue.get()
         if pkt is None:
             break
+        c.l4_traffic += len(pkt)
+        c.l4_frames += 1
+        c.tcp += 1
+        ip_src = socket.inet_ntoa(pkt[26:30])
+        ip_dst = socket.inet_ntoa(pkt[30:34])
+        ip_hdrlen_st = struct.unpack("!B", pkt[14])
+        ip_hdrlen = ip_hdrlen_st[0] & 0xf
+        if dummy_hdrlen <= 5:
+            src_port = struct.unpack('>H', payload[34:36])[0]
+            dst_port = struct.unpack('>H', payload[36:38])[0]
+        else:
+            st_byte = ip_hdrlen*4
+            src_port = struct.unpack('>H', payload[14+st_byte:16+st_byte])[0]
+            dst_port = struct.unpack('>H', payload[16+st_byte:18+st_byte])[0]
+        
         print("process_tcp()")
