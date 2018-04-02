@@ -71,9 +71,25 @@ def process_arp():
         pkt = arp_queue.get()
         if pkt is None:
             break
-        c.l3_traffic += len(pkt)
-        c.l3_frames += 1
-        print("process_arp()")
+        if pkt[14] == 0 and pkt[15] == 1 and pkt[16] == 8 and pkt[17] == 0:
+            c.l3_traffic += len(pkt)
+            c.l3_frames += 1
+            if pkt[18] == 6 and pkt[19] == 4:
+                opcode = struct.unpack('>H', pkt[20:22])[0]
+                if opcode == 1: # ARP request
+                    sender_mac = struct.unpack("!6s", pkt[22:28])[0]
+                    sender_ip = socket.inet_ntoa(pkt[28:32])
+                    target_mac = struct.unpack("!6s", pkt[32:38])[0]
+                    target_ip = socket.inet_ntoa(pkt[38:42])
+                elif opcode == 2: # ARP reply
+                    sender_mac = struct.unpack("!6s", pkt[22:28])[0]
+                    sender_ip = socket.inet_ntoa(pkt[28:32])
+                    target_mac = struct.unpack("!6s", pkt[32:38])[0]
+                    target_ip = socket.inet_ntoa(pkt[38:42])
+                print("process_arp(): %d # %s | %s -> %s | %s" % (opcode, sender_mac, sender_ip, target_mac, target_ip))
+        else:
+            print("process_arp()")
+        c.arp += 1
 
 def process_icmp():
     while True:
@@ -83,7 +99,9 @@ def process_icmp():
         c.l4_traffic += len(pkt)
         c.l4_frames += 1
         c.icmp += 1
-        print("process_icmp()")
+        ip_src = socket.inet_ntoa(pkt[26:30])
+        ip_dst = socket.inet_ntoa(pkt[30:34])
+        print("process_icmp(): %s -> %s" % (ip_src, ip_dst))
 
 def process_udp():
     while True:
@@ -93,7 +111,17 @@ def process_udp():
         c.l4_traffic += len(pkt)
         c.l4_frames += 1
         c.udp += 1
-        print("process_udp()")
+        ip_src = socket.inet_ntoa(pkt[26:30])
+        ip_dst = socket.inet_ntoa(pkt[30:34])
+        ip_hdrlen = pkt[14] & 0xf
+        if ip_hdrlen <= 5:
+            src_port = struct.unpack('>H', pkt[34:36])[0]
+            dst_port = struct.unpack('>H', pkt[36:38])[0]
+        else:
+            st_byte = ip_hdrlen*4
+            src_port = struct.unpack('>H', pkt[14+st_byte:16+st_byte])[0]
+            dst_port = struct.unpack('>H', pkt[16+st_byte:18+st_byte])[0]
+        print("process_udp(): %s:%d -> %s:%d" % (ip_src, src_port, ip_dst, dst_port))
 
 def process_tcp():
     while True:
@@ -105,14 +133,27 @@ def process_tcp():
         c.tcp += 1
         ip_src = socket.inet_ntoa(pkt[26:30])
         ip_dst = socket.inet_ntoa(pkt[30:34])
-        ip_hdrlen_st = struct.unpack("!B", pkt[14])
-        ip_hdrlen = ip_hdrlen_st[0] & 0xf
-        if dummy_hdrlen <= 5:
-            src_port = struct.unpack('>H', payload[34:36])[0]
-            dst_port = struct.unpack('>H', payload[36:38])[0]
+        ip_hdrlen = pkt[14] & 0xf
+        if ip_hdrlen <= 5:
+            src_port = struct.unpack('>H', pkt[34:36])[0]
+            dst_port = struct.unpack('>H', pkt[36:38])[0]
+            flags = pkt[47]
         else:
             st_byte = ip_hdrlen*4
-            src_port = struct.unpack('>H', payload[14+st_byte:16+st_byte])[0]
-            dst_port = struct.unpack('>H', payload[16+st_byte:18+st_byte])[0]
+            src_port = struct.unpack('>H', pkt[14+st_byte:16+st_byte])[0]
+            dst_port = struct.unpack('>H', pkt[16+st_byte:18+st_byte])[0]
+            flags = pkt[27+st_byte]
+        if flags & 0x01 != 0:
+            c.tcp_fin += 1
+        if flags & 0x02 != 0:
+            c.tcp_syn += 1
+        if flags & 0x04 != 0:
+            c.tcp_rst += 1
+        if flags & 0x08 != 0:
+            c.tcp_psh += 1
+        if flags & 0x10 != 0:
+            c.tcp_ack += 1
+        if flags & 0x10 != 0 and flags & 0x02 != 0:
+            c.tcp_synack += 1
         
-        print("process_tcp()")
+        print("process_tcp(): %s:%d -> %s:%d; FLAGS = %d" % (ip_src, src_port, ip_dst, dst_port, flags))

@@ -1,3 +1,3 @@
 from sniffer import *
 
-Sniffer("enp2s0").sniff()
+Sniffer("eno1").sniff()

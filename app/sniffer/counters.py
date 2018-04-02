@@ -4,6 +4,7 @@ class Counters:
         self.tcp_syn = 0
         self.tcp_ack = 0
         self.tcp_synack = 0
+        self.tcp_psh = 0
         self.tcp_rst = 0
         self.tcp_fin = 0
         self.tcp = 0
