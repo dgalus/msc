@@ -1,1 +1,1 @@
-from .redis import *
+from .rethink_db import *

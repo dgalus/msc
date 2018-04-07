@@ -8,3 +8,6 @@ def is_local_address(ip):
     if ip >= 0xC0A80000 and ip <= 0xC0A8FFFF:
         return True
     return False
+
+def hosts_in_the_same_netowrk(network_list, ip1, ip2):
+    pass
