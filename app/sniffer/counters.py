@@ -1,3 +1,6 @@
+import json
+import datetime
+
 class Counters:
     def __init__(self):
         self.session_count = 0
@@ -20,4 +23,5 @@ class Counters:
         self.l4_frames = 0
     
     def store_counters(self):
-        pass
+        ins = {}
+        timestamp_str = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
