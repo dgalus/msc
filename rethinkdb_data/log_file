@@ -1,0 +1,21 @@
+2018-04-06T20:27:26.325922009 0.069465s notice: Recursively removing directory /home/avc/github/msc/rethinkdb_data/tmp
+2018-04-06T20:27:26.356505514 0.100048s notice: Initializing directory /home/avc/github/msc/rethinkdb_data
+2018-04-06T20:27:26.356571540 0.100114s info: Creating a default database for your convenience. (This is because you ran 'rethinkdb' without 'create', 'serve', or '--join', and the directory '/home/avc/github/msc/rethinkdb_data' did not already exist or is empty.)
+2018-04-06T20:27:26.356594122 0.100137s notice: Running rethinkdb 2.3.6 (GCC 7.2.1)...
+2018-04-06T20:27:26.359831934 0.103376s notice: Running on Linux 4.15.9-1-ARCH x86_64
+2018-04-06T20:27:26.359867038 0.103410s notice: Loading data from directory /home/avc/github/msc/rethinkdb_data
+2018-04-06T20:27:26.641876317 0.385419s info: Automatically using cache size of 12639 MB
+2018-04-06T20:27:26.642336064 0.385879s notice: Listening for intracluster connections on port 29015
+2018-04-06T20:27:26.643320629 0.386863s notice: Listening for client driver connections on port 28015
+2018-04-06T20:27:26.643426708 0.386969s notice: Listening for administrative HTTP connections on port 8080
+2018-04-06T20:27:26.643430790 0.386973s notice: Listening on cluster addresses: 127.0.0.1, ::1
+2018-04-06T20:27:26.643434354 0.386977s notice: Listening on driver addresses: 127.0.0.1, ::1
+2018-04-06T20:27:26.643436148 0.386979s notice: Listening on http addresses: 127.0.0.1, ::1
+2018-04-06T20:27:26.643439965 0.386982s notice: To fully expose RethinkDB on the network, bind to all addresses by running rethinkdb with the `--bind all` command line option.
+2018-04-06T20:27:26.643443576 0.386986s notice: Server ready, "avc_jix" 8cd724e0-5cc5-4c55-a1a7-e4effd7d8eee
+2018-04-06T20:37:00.490011834 574.233555s info: Table bd830a50-d7a9-4cdf-8b3d-9d7830c0f5d3: Starting a new Raft election for term 1.
+2018-04-06T20:37:00.490325525 574.233868s info: Table bd830a50-d7a9-4cdf-8b3d-9d7830c0f5d3: Added replica on this server.
+2018-04-06T20:37:00.539925928 574.283469s info: Table bd830a50-d7a9-4cdf-8b3d-9d7830c0f5d3: This server is Raft leader for term 1. Latest log index is 0.
+2018-04-06T21:22:54.350026156 3328.093569s info: Table b42961a1-15b3-471a-8614-c436205668d5: Starting a new Raft election for term 1.
+2018-04-06T21:22:54.350272003 3328.093815s info: Table b42961a1-15b3-471a-8614-c436205668d5: Added replica on this server.
+2018-04-06T21:22:54.399832357 3328.143375s info: Table b42961a1-15b3-471a-8614-c436205668d5: This server is Raft leader for term 1. Latest log index is 0.
