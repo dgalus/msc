@@ -1,4 +1,5 @@
 import rethinkdb as r
+from .. import config
 
 class RethinkDB:
     def __init__(self):
@@ -14,7 +15,7 @@ class RethinkDB:
         r.table(table).insert(document).run()
     
     def count_in_table(self, table_name):
-        return r.table(UNSAFE_URL_TABLE).count().run()
+        return r.table(table_name).count().run()
     
     def is_domain_unsafe(self, domain):
         pass
