@@ -9,7 +9,10 @@ class RethinkDB:
             r.db(database).table_create(table_name).run()
         except:
             pass
-        
+    
+    def insert(self, table, document):
+        r.table(table).insert(document).run()
+    
     def count_in_table(self, table_name):
         return r.table(UNSAFE_URL_TABLE).count().run()
     

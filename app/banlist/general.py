@@ -1,8 +1,10 @@
 from .malc0de import malc0de_get_unsafe_addresses
 from .malwaredomainlist import malware_domain_list_get_unsafe_addresses, malware_domain_list_get_unsafe_domains
 from .openphish import openphish_get_unsafe_urls
+from ..database import *
 
 def initialize_unsafe_connections_list():
+    db = RethinkDB()
     addresses = []
     addresses_obj = []
     domains = []
@@ -13,11 +15,10 @@ def initialize_unsafe_connections_list():
     addresses += malware_domain_list_get_unsafe_addresses()
     domains += malware_domain_list_get_unsafe_domains()
     urls += openphish_get_unsafe_urls()
-    r.connect("localhost", 28015).repl()
     try:
-        r.db(DATABASE).table_create(UNSAFE_URL_TABLE).run()
-        r.db(DATABASE).table_create(UNSAFE_IP_TABLE).run()
-        r.db(DATABASE).table_create(UNSAFE_DOMAIN_TABLE).run()
+        db.create_table_if_not_exists(database=DATABASE, table_name=UNSAFE_URL_TABLE)
+        db.create_table_if_not_exists(database=DATABASE, table_name=UNSAFE_IP_TABLE)
+        db.create_table_if_not_exists(database=DATABASE, table_name=UNSAFE_DOMAIN_TABLE)
     except:
         pass
 
@@ -30,9 +31,9 @@ def initialize_unsafe_connections_list():
     for domain in domains:
         domain_obj.append({ "domain" : domain })
 
-    if r.table(UNSAFE_URL_TABLE).count().run() == 0:
-        r.table(UNSAFE_URL_TABLE).insert(urls_obj).run()
-    if r.table(UNSAFE_DOMAIN_TABLE).count().run() == 0:
-        r.table(UNSAFE_DOMAIN_TABLE).insert(domain_obj).run()
-    if r.table(UNSAFE_IP_TABLE).count().run() == 0:
-        r.table(UNSAFE_IP_TABLE).insert(addresses_obj).run()
+    if db.count_in_table(table_name=UNSAFE_URL_TABLE) == 0:
+        db.insert(table=UNSAFE_URL_TABLE, document=urls_obj)
+    if db.count_in_table(table_name=UNSAFE_DOMAIN_TABLE) == 0:
+        db.insert(table=UNSAFE_DOMAIN_TABLE, document=domain_obj)
+    if db.count_in_table(table_name=UNSAFE_IP_TABLE) == 0:
+        db.insert(table=UNSAFE_IP_TABLE, document=addresses_obj)
