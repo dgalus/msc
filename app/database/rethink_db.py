@@ -28,3 +28,6 @@ class RethinkDB:
     
     def get_mac_by_ip(self, ip):
         pass
+    
+    def get_analyzed_domain_info(self, domain):
+        return r.table(config['DB_TABLES']['analyzed_domain_table']).filter({ 'domain' : domain }).run()
