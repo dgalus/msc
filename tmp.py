@@ -94,4 +94,4 @@
 
 from app.analysis import DomainAnalysis
 
-print(DomainAnalysis.analyze('avcsec.net'))
+print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))

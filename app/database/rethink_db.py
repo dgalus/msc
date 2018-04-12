@@ -4,7 +4,10 @@ from .. import config
 class RethinkDB:
     def __init__(self):
         r.connect("localhost", 28015).repl()
-        
+    
+    def clear_db(self):
+        pass
+    
     def create_table_if_not_exists(self, database, table_name):
         try:
             r.db(database).table_create(table_name).run()

@@ -10,3 +10,4 @@ gunicorn
 bs4
 matplotlib
 rethinkdb
+schedule
