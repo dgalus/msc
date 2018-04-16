@@ -92,10 +92,14 @@
 #t.join()
 #t2.join()
 
-from app.analysis import DomainAnalysis
-from app.database import RethinkDB
+#from app.analysis import DomainAnalysis
+#from app.database import RethinkDB
 
-db = RethinkDB()
-db.create_all_tables()
+#db = RethinkDB()
+#db.create_all_tables()
 
-print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
+#print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
+
+from app.scan import tcp_connect_scan
+
+print(tcp_connect_scan('192.168.1.1'))
