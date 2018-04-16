@@ -3,34 +3,34 @@ from .. import config
 
 class RethinkDB:
     def __init__(self):
-        r.connect("localhost", 28015).repl()
+        self.conn = r.connect("localhost", 28015).repl()
     
     def clear_db(self):
         pass
     
     def create_table_if_not_exists(self, database, table_name):
         try:
-            r.db(database).table_create(table_name).run()
+            r.db(database).table_create(table_name).run(self.conn)
         except:
             pass
     
     def insert(self, table, document):
-        r.table(table).insert(document).run()
+        r.table(table).insert(document).run(self.conn)
     
     def count_in_table(self, table_name):
-        return r.table(table_name).count().run()
+        return r.table(table_name).count().run(self.conn)
     
     def is_domain_unsafe(self, domain):
-        pass
+        return True if r.table(config['DB_TABLES']['unsafe_domain_table']).filter({ 'domain' : domain }).count().run(self.conn) > 0 else False
     
     def is_url_unsafe(self, url):
-        pass
+        return True if r.table(config['DB_TABLES']['unsafe_url_table']).filter({ 'url' : url }).count().run(self.conn) > 0 else False
     
     def is_ip_unsafe(self, ip):
-        pass
+        return True if r.table(config['DB_TABLES']['unsafe_ip_table']).filter({ 'ip' : ip }).count().run(self.conn) > 0 else False
     
     def get_mac_by_ip(self, ip):
         pass
     
     def get_analyzed_domain_info(self, domain):
-        return r.table(config['DB_TABLES']['analyzed_domain_table']).filter({ 'domain' : domain }).run()
+        return r.table(config['DB_TABLES']['analyzed_domain_table']).filter({ 'domain' : domain }).run(self.conn)
