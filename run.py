@@ -18,6 +18,7 @@ def main():
 
     if args.clear_db:
         RethinkDB().clear_db()
+        RethinkDB.create_all_tables()
     if args.initialize_unsafe:
         initialize_unsafe_connections_list()
     if args.initialize_geolocation:

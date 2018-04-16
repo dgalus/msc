@@ -11,7 +11,9 @@ class RethinkDB:
                 self.create_table_if_not_exists(config['DB_TABLES']['database'], config['DB_TABLES'][_c])
     
     def clear_db(self):
-        pass
+        r.db_drop(config['DB_TABLES']['database']).run(conn)
+        r.db_create(config['DB_TABLES']['database']).run(conn)
+        self.create_all_tables()
     
     def create_table_if_not_exists(self, database, table_name):
         try:
