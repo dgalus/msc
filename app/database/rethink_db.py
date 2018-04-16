@@ -5,6 +5,11 @@ class RethinkDB:
     def __init__(self):
         self.conn = r.connect("localhost", 28015).repl()
     
+    def create_all_tables(self):
+        for _c in config['DB_TABLES']:
+            if _c != 'database':
+                self.create_table_if_not_exists(config['DB_TABLES']['database'], config['DB_TABLES'][_c])
+    
     def clear_db(self):
         pass
     

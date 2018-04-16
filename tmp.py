@@ -93,5 +93,9 @@
 #t2.join()
 
 from app.analysis import DomainAnalysis
+from app.database import RethinkDB
+
+db = RethinkDB()
+db.create_all_tables()
 
 print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
