@@ -1,5 +1,7 @@
 import socket
 import struct
+from libnmap.process import NmapProcess
+from libnmap.parser import NmapParser
 
 def checksum(msg):
     s = 0
