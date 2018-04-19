@@ -1,37 +1,48 @@
 import socket
 import struct
 from libnmap.process import NmapProcess
-from libnmap.parser import NmapParser
+from bs4 import BeautifulSoup
 
-def checksum(msg):
-    s = 0
-    for i in range(0, len(msg), 2):
-        w = ord(msg[i]) + (ord(msg[i+1]) << 8 )
-        s = s + w
-    s = (s>>16) + (s & 0xffff);
-    s = s + (s >> 16);
-    s = ~s & 0xffff
-    return s
-
-def tcp_connect_scan(dest_ip):
+def tcp_connect_scan(ip):
+    nm = NmapProcess(ip, options="-sT -T4 -p 1-65535")
+    nm.run()
+    soup = BeautifulSoup(nm.stdout, "lxml")
+    ports_xml = soup.find('host').find('ports').find_all('port')
     open_ports = []
-    for port in range(1, 65536):
-        try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(0.01)
-            result = sock.connect_ex((dest_ip, port))
-            if result == 0:
-                open_ports.append(port)
-            sock.close()
-        except:
-            pass
+    for px in ports_xml:
+        if px.find('state').get('state') == 'open':
+            open_ports.append(int(px.get('portid')))
     return open_ports
 
 def tcp_syn_scan(ip):
-    pass
+    nm = NmapProcess(ip, options="-sS -T4 -p 1-65535")
+    nm.run()
+    soup = BeautifulSoup(nm.stdout, "lxml")
+    ports_xml = soup.find('host').find('ports').find_all('port')
+    open_ports = []
+    for px in ports_xml:
+        if px.find('state').get('state') == 'open':
+            open_ports.append(int(px.get('portid')))
+    return open_ports
 
 def tcp_ack_scan(ip):
-    pass
+    nm = NmapProcess(ip, options="-sA -T4 -p 1-65535")
+    nm.run()
+    soup = BeautifulSoup(nm.stdout, "lxml")
+    ports_xml = soup.find('host').find('ports').find_all('port')
+    open_ports = []
+    for px in ports_xml:
+        if px.find('state').get('state') == 'open':
+            open_ports.append(int(px.get('portid')))
+    return open_ports    
 
 def tcp_fin_scan(ip):
-    pass
+    nm = NmapProcess(ip, options="-sF -T4 -p 1-65535")
+    nm.run()
+    soup = BeautifulSoup(nm.stdout, "lxml")
+    ports_xml = soup.find('host').find('ports').find_all('port')
+    closed_ports = []
+    for px in ports_xml:
+        if px.find('state').get('state') == 'closed':
+            closed_ports.append(int(px.get('portid')))
+    return closed_ports

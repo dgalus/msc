@@ -12,3 +12,4 @@ matplotlib
 rethinkdb
 schedule
 python-libnmap
+lxml

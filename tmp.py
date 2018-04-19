@@ -100,6 +100,6 @@
 
 #print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
 
-from app.scan import udp_scan
+from app.scan import tcp_fin_scan
 
-print(udp_scan('192.168.1.17'))
+print(tcp_fin_scan('192.168.1.1'))
