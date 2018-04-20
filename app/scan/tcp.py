@@ -1,5 +1,3 @@
-import socket
-import struct
 from libnmap.process import NmapProcess
 from bs4 import BeautifulSoup
 
