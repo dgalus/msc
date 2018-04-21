@@ -40,10 +40,10 @@ class Sniffer:
                 pkt, sa_ll = self.ins.recvfrom(MTU)
                 if len(pkt) <= 0:
                     break
-                eth_header = struct.unpack("!6s6sH", pkt[0:14])
-                if eth_header[2] == 0x800:
+                eth_header = struct.unpack("!H", pkt[12:14])
+                if eth_header[0] == 0x800:
                     ip_queue.put(pkt)
-                elif eth_header[2] == 0x806: 
+                elif eth_header[0] == 0x806: 
                     arp_queue.put(pkt)
                 c.l2_traffic += len(pkt)
                 c.l2_frames += 1
@@ -71,9 +71,9 @@ def process_arp():
         pkt = arp_queue.get()
         if pkt is None:
             break
+        c.l3_traffic += len(pkt)
+        c.l3_frames += 1
         if pkt[14] == 0 and pkt[15] == 1 and pkt[16] == 8 and pkt[17] == 0:
-            c.l3_traffic += len(pkt)
-            c.l3_frames += 1
             if pkt[18] == 6 and pkt[19] == 4:
                 opcode = struct.unpack('>H', pkt[20:22])[0]
                 if opcode == 1: # ARP request
@@ -155,5 +155,4 @@ def process_tcp():
             c.tcp_ack += 1
         if flags & 0x10 != 0 and flags & 0x02 != 0:
             c.tcp_synack += 1
-        
         print("process_tcp(): %s:%d -> %s:%d; FLAGS = %d" % (ip_src, src_port, ip_dst, dst_port, flags))

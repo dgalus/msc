@@ -100,6 +100,5 @@
 
 #print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
 
-from app.scan import tcp_fin_scan
-
-print(tcp_fin_scan('192.168.1.1'))
+from app.sniffer import *
+Sniffer("eno1").sniff()
