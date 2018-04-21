@@ -7,6 +7,7 @@ Alert = namedtuple("Alert", "alert_type description")
 
 class AlertType(Enum):
     ARP_SPOOFING = 1
+    NEW_HOST_DETECTED = 2
 
 
 class ARPSpoofingAlert:
@@ -17,6 +18,15 @@ class ARPSpoofingAlert:
     
     def to_string(self):
         return ip.addr + " is known under " + db_mac + " but " + arp_mac + " found in reply. Check for ARP spoofing."
+
+
+class NewHostDetectedAlert:
+    def __init__(self, ip_addr):
+        self.ip_addr = ip_addr
+        
+    def to_string(self):
+        return "New host detected: " + ip_addr + "."
+
 
 
 class Alerts:
