@@ -1,11 +1,11 @@
 class TCPSession:
-    def __init__(self, ip_src, ip_dst, src_port, dst_port, size, packets=0, last_packet=None, remote_geolocation=None, traffic_pattern=None):
+    def __init__(self, ip_src, ip_dst, src_port, dst_port, remote_geolocation=None):
         self.ip_src = ip_src
         self.ip_dst = ip_dst
         self.src_port = src_port
         self.dst_port = dst_port
-        self.size = size
-        self.packets = packets
-        self.last_packet = last_packet
         self.remote_geolocation = remote_geolocation
-        self.traffic_pattern = traffic_pattern
+        self.segments = set()
+
+    def insert_segment(ip_src, ip_dest, src_port, dst_port, tcp_segment):
+        pass
