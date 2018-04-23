@@ -1,3 +1,4 @@
+from operator import itemgetter
 import rethinkdb as r
 from .. import config
 from ..sniffer import TCPSegment, TCPSession
@@ -13,8 +14,8 @@ class RethinkDB:
                 self.create_table_if_not_exists(config['DB_TABLES']['database'], config['DB_TABLES'][_c])
     
     def clear_db(self):
-        r.db_drop(config['DB_TABLES']['database']).run(conn)
-        r.db_create(config['DB_TABLES']['database']).run(conn)
+        r.db_drop(config['DB_TABLES']['database']).run(self.conn)
+        r.db_create(config['DB_TABLES']['database']).run(self.conn)
         self.create_all_tables()
     
     def create_table_if_not_exists(self, database, table_name):
@@ -24,7 +25,7 @@ class RethinkDB:
             pass
     
     def insert(self, table, document):
-        r.table(table).insert(document).run(self.conn)
+        return r.table(table).insert(document).run(self.conn)
     
     def count_in_table(self, table_name):
         return r.table(table_name).count().run(self.conn)
@@ -50,16 +51,25 @@ class RethinkDB:
     # SESSIONS
     def insert_new_tcp_session(self, tcp_session):
         if isinstance(tcp_session, TCPSession):
-            return r.table(config['DB_TABLES']['tcp_sessions']).add(tcp_session.__dict__).run(self.conn)
-            
+            return r.table(config['DB_TABLES']['tcp_session_table']).insert(tcp_session.__dict__).run(self.conn)
+        return None
+    
     def get_last_tcp_session(self, ip_src, src_port, ip_dst, dst_port):
-        return r.table(config['DB_TABLES']['tcp_sessions']).filter((r.row('ip_src') == ip_src) & (r.row('src_port') == src_port) 
-                                    & (r.row('ip_dst') == ip_dst) & (r.row('dst_port') == dst_port)).run(self.conn)
+        res = r.table(config['DB_TABLES']['tcp_session_table']).filter(
+            lambda session: (session['ip_src'] == ip_src) & (session['src_port'] == src_port) & (session['ip_dst'] == ip_dst)
+            & (session['dst_port'] == dst_port) & (session['last_segm_tstmp'])).run(self.conn)
+        sorted_res = sorted(res, key=itemgetter('last_segm_tstmp'))
+        if len(sorted_res) > 0:
+            return sorted_res[-1]
+        else:
+            return None
+
     
     def count_active_tcp_sessions(self):
-        pass
+        return r.table(config['DB_TABLES']['tcp_session_table']).filter(r.row['is_active'] == True).count().run(self.conn)
     
     def insert_tcp_segment(self, ip_src, src_port, ip_dst, dst_port, tcp_segment):
+        
         # update last_segm_tstmp 
         pass
     
