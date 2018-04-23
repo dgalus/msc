@@ -1,13 +1,10 @@
 import ipaddress
 
 def is_local_address(ip):
-    if ip >= 0x0A000000 and ip <= 0x0AFFFFFF:
-        return True
-    if ip >= 0xAC100000 and ip <= 0xAC1FFFFF:
-        return True
-    if ip >= 0xC0A80000 and ip <= 0xC0A8FFFF:
-        return True
-    return False
+    return ipaddress.IPv4Address(ip).is_private()
 
 def hosts_in_the_same_netowrk(network_list, ip1, ip2):
-    pass
+    for network in network_list:
+        if ipaddress.IPv4Address(ip1) in ipaddress.IPv4Network(network) and ipaddress.IPv4Address(ip2) in ipaddress.IPv4Network(network):
+            return True
+    return False
