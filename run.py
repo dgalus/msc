@@ -15,7 +15,7 @@ def main():
     parser.add_argument("-u", "--initialize_unsafe", action="store_true", help="Initialize a new set of unsafe URLs, domains and IPs")
 
     args = parser.parse_args()
-
+    
     if args.clear_db:
         RethinkDB().clear_db()
         RethinkDB.create_all_tables()

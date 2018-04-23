@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 import collections
+import json
 
 class AppConfig(object):
     def __init__(self, config_path):
@@ -27,5 +28,6 @@ class AppConfig(object):
 config_object = AppConfig('config.ini')
 config = config_object.get_config_dict()
 
+user_config = json.load(open('config.json'))
 
 from .banlist import *

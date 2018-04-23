@@ -1,3 +1,5 @@
+from .utils import *
+from .. import user_config
 from ..geolocation import GeoLocation
 
 class TCPSession:
@@ -9,6 +11,12 @@ class TCPSession:
         if remote_geolocation is not None:
             self.remote_geolocation = remote_geolocation
         else:
-            # TODO: determine remote address
-            self.remote_geolocation = GeoLocation.get_country_by_address(self.ip_dst)
+            
+            if not hosts_in_the_same_netowrk(user_config['local_netowrks'], ip_src, ip_dst):
+                if is_local_address(ip_src):
+                    self.remote_geolocation = GeoLocation.get_country_by_address(self.ip_dst)
+                else:
+                    self.remote_geolocation = GeoLocation.get_country_by_address(self.ip_src)
+            else:
+                self.remote_geolocation = 'LOCAL'
         self.segments = set()
