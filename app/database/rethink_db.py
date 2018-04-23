@@ -52,13 +52,15 @@ class RethinkDB:
         if isinstance(tcp_session, TCPSession):
             return r.table(config['DB_TABLES']['tcp_sessions']).add(tcp_session.__dict__).run(self.conn)
             
-    def get_tcp_session(self, ip_src, src_port, ip_dst, dst_port):
-        pass
+    def get_last_tcp_session(self, ip_src, src_port, ip_dst, dst_port):
+        return r.table(config['DB_TABLES']['tcp_sessions']).filter((r.row('ip_src') == ip_src) & (r.row('src_port') == src_port) 
+                                    & (r.row('ip_dst') == ip_dst) & (r.row('dst_port') == dst_port)).run(self.conn)
     
     def count_active_tcp_sessions(self):
         pass
     
     def insert_tcp_segment(self, ip_src, src_port, ip_dst, dst_port, tcp_segment):
+        # update last_segm_tstmp 
         pass
     
     def get_all_active_tcp_sessions(self):
