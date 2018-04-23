@@ -13,3 +13,5 @@ rethinkdb
 schedule
 python-libnmap
 lxml
+psycopg2
+sqlalchemy
