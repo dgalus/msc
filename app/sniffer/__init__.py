@@ -1,9 +1,8 @@
-from .enums import *
-from .sniffer import Sniffer
-from .tcp_session import *
+from .enums import Direction
+from .tcp_session import TCPSession
+from .tcp_segment import TCPSegment, TCPSegmentDirection
+from .counters import Counters
 from .udp_session import *
-from .counters import *
-from .tcp_segment import *
-from .active_connections import *
+from .sniffer import Sniffer
 from .utils import *
 

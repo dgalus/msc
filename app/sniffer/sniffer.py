@@ -9,6 +9,8 @@ import queue
 import threading
 import time
 from .counters import Counters
+from ..database import RethinkDB
+from .tcp_segment import TCPSegment
 
 ip_queue = queue.Queue()
 arp_queue = queue.Queue()
@@ -16,6 +18,7 @@ icmp_queue = queue.Queue()
 udp_queue = queue.Queue()
 tcp_queue = queue.Queue()
 c = Counters()
+db = RethinkDB()
 
 class Sniffer:
     def __init__(self, interface_name):
@@ -64,7 +67,6 @@ def process_ip():
             tcp_queue.put(pkt)
         elif pkt[23] == 17:
             udp_queue.put(pkt)
-        print("process_ip()")
 
 def process_arp():
     while True:
@@ -155,4 +157,5 @@ def process_tcp():
             c.tcp_ack += 1
         if flags & 0x10 != 0 and flags & 0x02 != 0:
             c.tcp_synack += 1
-        print("process_tcp(): %s:%d -> %s:%d; FLAGS = %d" % (ip_src, src_port, ip_dst, dst_port, flags))
+        db.insert_tcp_segment(ip_src, src_port, ip_dst, dst_port, TCPSegment(flags, len(pkt)))
+        #print("process_tcp(): %s:%d -> %s:%d; FLAGS = %d" % (ip_src, src_port, ip_dst, dst_port, flags))

@@ -4,6 +4,9 @@ from enum import Enum
 class TCPSegmentDirection(Enum):
     FROM_SRC_TO_DST = 0
     FROM_DST_TO_SRC = 1
+    
+    def __int__(self):
+        return self.value
 
 class TCPSegment:
     direction = None

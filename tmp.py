@@ -100,12 +100,19 @@
 
 #print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
 
-from app.database import RethinkDB
-from app.sniffer import TCPSegment, TCPSession
+#from app.database import RethinkDB
+#from app.sniffer import TCPSegment, TCPSession
 
-db = RethinkDB()
+#db = RethinkDB()
 #db.clear_db()
-session = TCPSession('192.168.1.17', 1234, '192.168.1.1', 800)
-print(db.insert_new_tcp_session(session))
-print("-------------------------------------")
-print(db.get_last_tcp_session('192.168.1.17', 1234, '192.168.1.1', 800))
+#session = TCPSession('192.168.1.117', 1234, '192.168.1.1', 800)
+#print(db.insert_new_tcp_session(session))
+#print("-------------------------------------")
+#print(db.get_last_tcp_session('192.168.1.17', 1234, '192.168.1.1', 800))
+#tcp_segment = TCPSegment(24, 1200)
+#print(db.insert_tcp_segment('192.168.1.19', 1234, '192.168.1.1', 8002, tcp_segment))
+
+
+from app.sniffer import Sniffer
+
+Sniffer("eno1").sniff()

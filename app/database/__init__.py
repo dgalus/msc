@@ -1,1 +1,1 @@
-from .rethink_db import *
+from .rethink_db import RethinkDB

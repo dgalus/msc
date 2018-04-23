@@ -1,7 +1,8 @@
+import datetime
 from operator import itemgetter
 import rethinkdb as r
 from .. import config
-from ..sniffer import TCPSegment, TCPSession
+from ..sniffer import TCPSession, TCPSegmentDirection
 
 class RethinkDB:
     def __init__(self):
@@ -57,27 +58,46 @@ class RethinkDB:
     def get_last_tcp_session(self, ip_src, src_port, ip_dst, dst_port):
         res = r.table(config['DB_TABLES']['tcp_session_table']).filter(
             lambda session: (session['ip_src'] == ip_src) & (session['src_port'] == src_port) & (session['ip_dst'] == ip_dst)
-            & (session['dst_port'] == dst_port) & (session['last_segm_tstmp'])).run(self.conn)
+            & (session['dst_port'] == dst_port)).run(self.conn)
         sorted_res = sorted(res, key=itemgetter('last_segm_tstmp'))
         if len(sorted_res) > 0:
             return sorted_res[-1]
         else:
             return None
-
-    
+        
     def count_active_tcp_sessions(self):
         return r.table(config['DB_TABLES']['tcp_session_table']).filter(r.row['is_active'] == True).count().run(self.conn)
     
     def insert_tcp_segment(self, ip_src, src_port, ip_dst, dst_port, tcp_segment):
-        
-        # update last_segm_tstmp 
-        pass
+        session = self.get_last_tcp_session(ip_src, src_port, ip_dst, dst_port)
+        if session:
+            tcp_segment.direction = int(TCPSegmentDirection.FROM_SRC_TO_DST)
+            return r.table(config['DB_TABLES']['tcp_session_table']).get(session['id']).update(
+                {"segments": r.row["segments"].append(tcp_segment.__dict__), 
+                 "last_segm_tstmp" : datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}
+            ).run(self.conn)
+        session = self.get_last_tcp_session(ip_dst, dst_port, ip_src, src_port)
+        if session:
+            tcp_segment.direction = int(TCPSegmentDirection.FROM_DST_TO_SRC)
+            return r.table(config['DB_TABLES']['tcp_session_table']).get(session['id']).update(
+                {"segments": r.row["segments"].append(tcp_segment.__dict__), 
+                 "last_segm_tstmp" : datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}
+            ).run(self.conn)
+        else:
+            session = self.insert_new_tcp_session(TCPSession(ip_src, src_port, ip_dst, dst_port))
+            tcp_segment.direction = int(TCPSegmentDirection.FROM_SRC_TO_DST)
+            return r.table(config['DB_TABLES']['tcp_session_table']).get(session['generated_keys'][0]).update(
+                {"segments": r.row["segments"].append(tcp_segment.__dict__), 
+                 "last_segm_tstmp" : datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}
+            ).run(self.conn)
+        return None
     
     def get_all_active_tcp_sessions(self):
-        pass
+        return r.table(config['DB_TABLES']['tcp_session_table']).filter(r.row['is_active'] == True).run(self.conn)
     
     def get_active_tcp_sessions_by_host(self, ip):
-        pass
+        return r.table(config['DB_TABLES']['tcp_session_table']).filter(
+            lambda session: ((session['ip_src'] == ip) | (session['ip_dst'] == ip)) & (session['is_active'] == True)).run(self.conn)
     
     def get_host_tcp_sessions_by_timestamp(self, from_timestamp, to_timestamp):
         pass

@@ -29,5 +29,3 @@ config_object = AppConfig('config.ini')
 config = config_object.get_config_dict()
 
 user_config = json.load(open('config.json'))
-
-from .banlist import *
