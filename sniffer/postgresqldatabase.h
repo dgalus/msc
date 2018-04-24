@@ -18,6 +18,8 @@ public:
     std::vector<std::pair<std::string, std::string>> getARPTable();
     void insertNewTCPSessions(std::vector<TCPSession> sessions);
     void insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments);
+    void insertUDPSegments(std::vector<UDPSegment> segments);
+    void insertICMPSegments(std::vector<ICMPSegment> segments);
     void insertCounters(Counters counters, std::string timestamp);
     std::vector<std::pair<TCPSessionMin, unsigned int>> getActiveTCPSessions();
     void closeTCPSessions(std::vector<unsigned int> sessionIds);

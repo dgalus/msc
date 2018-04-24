@@ -63,7 +63,8 @@ double PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData)
 
 void PostgreSQLCache::bulkInsertTCPSegments()
 {
-
+    // find session id
+    //db->insertTCPSegments(tcpSegments);
 }
 
 void PostgreSQLCache::bulkInsertUDPSegments()

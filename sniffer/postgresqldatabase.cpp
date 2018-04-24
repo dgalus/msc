@@ -115,6 +115,32 @@ void PostgresqlDatabase::insertTCPSegments(std::vector<std::pair<unsigned int, T
     }
 }
 
+void PostgresqlDatabase::insertUDPSegments(std::vector<UDPSegment> segments)
+{
+    if(segments.size() > 0)
+    {
+        std::string query = "insert into udp_segment (ip_src, src_port, ip_dst, dst_port, size, timestamp) values ";
+        for(int i = 0; i < segments.size(); i++)
+        {
+            query += "('" + segments[i].ip_src + "', " + std::to_string(segments[i].src_port) + ", '" + segments[i].ip_dst + "', "
+                    "" + std::to_string(segments[i].dst_port) + ", " + std::to_string(segments[i].size) + ", '" + segments[i].timestamp + "')";
+            if(i < segments.size()-1)
+                query += ", ";
+            else
+                query += "; ";
+        }
+        executeQuery(query);
+    }
+}
+
+void PostgresqlDatabase::insertICMPSegments(std::vector<ICMPSegment> segments)
+{
+    if(segments.size() > 0)
+    {
+
+    }
+}
+
 void PostgresqlDatabase::insertCounters(Counters counters, std::string timestamp)
 {
     std::string query = "insert into counter (timestamp, tcp_syn, tcp_ack, tcp_synack, tcp_psh, tcp_rst, tcp_fin, tcp, "
