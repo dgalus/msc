@@ -137,7 +137,16 @@ void PostgresqlDatabase::insertICMPSegments(std::vector<ICMPSegment> segments)
 {
     if(segments.size() > 0)
     {
-
+        std::string query = "insert into icmp_segment (ip_src, ip_dst, icmp_type, timestamp) values ";
+        for(int i = 0; i < segments.size(); i++)
+        {
+            query += "('" + segments[i].ip_src + "', '" + segments[i].ip_dst + "', " + std::to_string(segments[i].type) + ", '" + segments[i].timestamp + "')";
+            if(i < segments.size()-1)
+                query += ", ";
+            else
+                query += "; ";
+        }
+        executeQuery(query);
     }
 }
 
