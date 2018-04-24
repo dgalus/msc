@@ -32,6 +32,7 @@ private:
     std::vector<std::string> unsafeDomains;
     std::vector<std::string> unsafeIPs;
     std::vector<std::pair<TCPSessionMin, unsigned int>> tcpSessions;
+    std::vector<int> sessionsToClose;
 };
 
 #endif // POSTGRESQLCACHE_H
