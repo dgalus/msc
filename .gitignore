@@ -104,3 +104,4 @@ ENV/
 config.json
 
 rethinkdb_data/
+sniffer_debug/

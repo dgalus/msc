@@ -50,8 +50,12 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../sniffer/main.cpp 
-OBJECTS       = main.o
+SOURCES       = ../sniffer/main.cpp \
+		../sniffer/postgresqldatabase.cpp \
+		../sniffer/postgresqlcache.cpp 
+OBJECTS       = main.o \
+		postgresqldatabase.o \
+		postgresqlcache.o
 DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/common/unix.conf \
 		/usr/lib/qt/mkspecs/common/linux.conf \
@@ -214,6 +218,7 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/qt_config.prf \
 		/usr/lib/qt/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/qt/mkspecs/features/spec_post.prf \
+		../sniffer/.qmake.stash \
 		/usr/lib/qt/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/qt/mkspecs/features/toolchain.prf \
 		/usr/lib/qt/mkspecs/features/default_pre.prf \
@@ -227,7 +232,15 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/exceptions.prf \
 		/usr/lib/qt/mkspecs/features/yacc.prf \
 		/usr/lib/qt/mkspecs/features/lex.prf \
-		../sniffer/sniffer.pro  ../sniffer/main.cpp
+		../sniffer/sniffer.pro arphdr.h \
+		utils.h \
+		structures.h \
+		counters.h \
+		postgresqldatabase.h \
+		idatabase.h \
+		postgresqlcache.h ../sniffer/main.cpp \
+		../sniffer/postgresqldatabase.cpp \
+		../sniffer/postgresqlcache.cpp
 QMAKE_TARGET  = sniffer
 DESTDIR       = 
 TARGET        = sniffer
@@ -401,6 +414,7 @@ Makefile: ../sniffer/sniffer.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/l
 		/usr/lib/qt/mkspecs/features/qt_config.prf \
 		/usr/lib/qt/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/qt/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/usr/lib/qt/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/qt/mkspecs/features/toolchain.prf \
 		/usr/lib/qt/mkspecs/features/default_pre.prf \
@@ -578,6 +592,7 @@ Makefile: ../sniffer/sniffer.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/l
 /usr/lib/qt/mkspecs/features/qt_config.prf:
 /usr/lib/qt/mkspecs/linux-g++/qmake.conf:
 /usr/lib/qt/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /usr/lib/qt/mkspecs/features/exclusive_builds.prf:
 /usr/lib/qt/mkspecs/features/toolchain.prf:
 /usr/lib/qt/mkspecs/features/default_pre.prf:
@@ -635,8 +650,16 @@ compiler_clean:
 
 ####### Compile
 
-main.o: ../sniffer/main.cpp 
+main.o: ../sniffer/main.cpp ../sniffer/utils.h \
+		../sniffer/arphdr.h \
+		../sniffer/structures.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../sniffer/main.cpp
+
+postgresqldatabase.o: ../sniffer/postgresqldatabase.cpp ../sniffer/postgresqldatabase.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o postgresqldatabase.o ../sniffer/postgresqldatabase.cpp
+
+postgresqlcache.o: ../sniffer/postgresqlcache.cpp ../sniffer/postgresqlcache.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o postgresqlcache.o ../sniffer/postgresqlcache.cpp
 
 ####### Install
 

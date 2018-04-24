@@ -23,9 +23,15 @@
 #define BUFSIZE 65536
 
 
-void processFrame(unsigned char *buffer)
+void processFrame(unsigned char *buffer, int buflen)
 {
     struct ethhdr *eth = (struct ethhdr *)(buffer);
+    char source_addr[18];
+    char destination_addr[18];
+    snprintf(source_addr, 18, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", eth->h_source[0], eth->h_source[1], eth->h_source[2], eth->h_source[3], eth->h_source[4], eth->h_source[5]);
+    snprintf(destination_addr, 18, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", eth->h_dest[0], eth->h_dest[1], eth->h_dest[2], eth->h_dest[3], eth->h_dest[4], eth->h_dest[5]);
+    std::string source = std::string(source_addr);
+    std::string destination = std::string(destination_addr);
     if(source == "00:00:00:00:00:00" && destination == "00:00:00:00:00:00")
         return;
 
@@ -107,7 +113,7 @@ void processFrame(unsigned char *buffer)
             TCPSegment tcp_seg;
             tcp_seg.direction = TCPSegmentDirection::UNKNOWN;
             tcp_seg.timestamp = getCurrentDateTime();
-            tcp_seg.size = strlen(buffer) - iphdrlen - sizeof(struct ethhdr);
+            tcp_seg.size = buflen - iphdrlen - sizeof(struct ethhdr);
             std::vector<std::string> flags;
             if(tcph->ack != 0) flags.push_back("ACK");
             if(tcph->psh != 0) flags.push_back("PSH");
@@ -124,7 +130,7 @@ void processFrame(unsigned char *buffer)
             udp_seg.dst_port = ntohs(udph->dest);
             udp_seg.ip_dst = destination_ip;
             udp_seg.ip_src = source_ip;
-            udp_seg.size = strlen(buffer) - iphdrlen - sizeof(struct ethhdr);
+            udp_seg.size = buflen - iphdrlen - sizeof(struct ethhdr);
             udp_seg.src_port = ntohs(udph->source);
             udp_seg.timestamp = getCurrentDateTime();
         }
@@ -135,6 +141,12 @@ int main(int argc, char *argv[])
 {
     int sock_r;
     int buflen;
+
+    if(argc < 2)
+    {
+        printf("USAGE:\n%s <INTERFACE_NAME>\n", argv[0]);
+        exit(1);
+    }
 
     sock_r = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
     if(sock_r < 0)
@@ -186,7 +198,7 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        processFrame(buffer);
+        processFrame(buffer, buflen);
     }
     free(buffer);
     return 0;
