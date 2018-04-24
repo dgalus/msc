@@ -166,6 +166,22 @@ class ARP(base):
 		self.mac = mac
 
 
+class ProposedIptablesRules(base):
+	__tablename__ = 'proposed_iptables_rules'
+	id = Column(Integer, primary_key=True, nullable=False)
+	rule = Column(String, nullable=False)
+	description = Column(String, nullable=False)
+	timestamp = Column(DateTime, nullable=False)
+	rank = Column(Integer, nullable=False)
+
+	def __init__(self, rule, description, timestamp, rank):
+		self.rule = rule
+		self.description = description
+		self.timestamp = timestamp
+		self.rank = rank
+		
+		
+
 Session = sessionmaker(db)  
 session = Session()
 base.metadata.create_all(db)
