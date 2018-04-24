@@ -145,8 +145,7 @@ int main(int argc, char *argv[])
     int buflen;
 
     PostgresqlDatabase db;
-    std::vector<unsigned int> test;
-    db.closeTCPSessions(test);
+    db.getActiveTCPSessions();
 
     if(argc < 2)
     {

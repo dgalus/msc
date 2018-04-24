@@ -6,7 +6,6 @@
 #include <string>
 #include <pqxx/pqxx>
 #include "idatabase.h"
-#include "json.h"
 
 class PostgresqlDatabase : public IDatabase
 {
