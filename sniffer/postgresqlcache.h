@@ -23,7 +23,7 @@ public:
     Counters* c;
 
 private:
-    double getTCPSessionId(TCPSessionMin sessionData);
+    unsigned int getTCPSessionId(TCPSessionMin sessionData);
     void bulkInsertTCPSegments();
     void bulkInsertUDPSegments();
     void bulkInsertICMPSegments();

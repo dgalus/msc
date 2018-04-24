@@ -23,7 +23,7 @@
 
 #define BUFSIZE 65536
 
-PostgreSQLCache pc();
+PostgreSQLCache *pc;
 
 void processFrame(unsigned char *buffer, int buflen)
 {
@@ -36,9 +36,14 @@ void processFrame(unsigned char *buffer, int buflen)
     std::string destination = std::string(destination_addr);
     if(source == "00:00:00:00:00:00" && destination == "00:00:00:00:00:00")
         return;
+    pc->c->l2_frames++;
+    pc->c->l2_traffic += buflen;
 
     if(eth->h_proto == 0x0608) // ARP
     {
+        pc->c->l3_traffic += (buflen - sizeof(struct ethhdr));
+        pc->c->l3_frames++;
+        pc->c->arp++;
         struct arphdr_t *arph = (struct arphdr_t *)(buffer + sizeof(struct ethhdr));
         if(ntohs(arph->htype) == 1 && ntohs(arph->ptype) == 0x0800)
         {
@@ -82,6 +87,9 @@ void processFrame(unsigned char *buffer, int buflen)
     }
     else if(eth->h_proto == 0x0008)
     {
+        pc->c->l3_traffic += (buflen - sizeof(struct ethhdr));
+        pc->c->l3_frames++;
+        pc->c->ip++;
         unsigned short iphdrlen;
         struct sockaddr_in source_addr;
         struct sockaddr_in destination_addr;
@@ -97,15 +105,22 @@ void processFrame(unsigned char *buffer, int buflen)
 
         if(iph->protocol == 1)
         {
+            pc->c->l4_frames++;
+            pc->c->l4_traffic += (buflen - sizeof(struct ethhdr) - iphdrlen);
+            pc->c->icmp++;
             struct icmphdr *icmph = (struct icmphdr *)(buffer + iphdrlen + sizeof(struct ethhdr));
             ICMPSegment icmp_seg;
             icmp_seg.ip_dst = destination_ip;
             icmp_seg.ip_src = source_ip;
             icmp_seg.timestamp = getCurrentDateTime();
             icmp_seg.type = icmph->type;
+            pc->pushICMPSegment(icmp_seg);
         }
         else if(iph->protocol == 6)
         {
+            pc->c->l4_frames++;
+            pc->c->l4_traffic += (buflen - sizeof(struct ethhdr) - iphdrlen);
+            pc->c->tcp++;
             struct tcphdr *tcph = (struct tcphdr*) (buffer + iphdrlen + sizeof(struct ethhdr));
             TCPSessionMin tcp_sess_min;
             tcp_sess_min.dst_port = ntohs(tcph->dest);
@@ -117,16 +132,43 @@ void processFrame(unsigned char *buffer, int buflen)
             tcp_seg.timestamp = getCurrentDateTime();
             tcp_seg.size = buflen - iphdrlen - sizeof(struct ethhdr);
             std::vector<std::string> flags;
-            if(tcph->ack != 0) flags.push_back("ACK");
-            if(tcph->psh != 0) flags.push_back("PSH");
-            if(tcph->rst != 0) flags.push_back("RST");
-            if(tcph->syn != 0) flags.push_back("SYN");
-            if(tcph->fin != 0) flags.push_back("FIN");
+            if(tcph->ack != 0)
+            {
+                flags.push_back("ACK");
+                pc->c->tcp_ack++;
+            }
+            if(tcph->psh != 0)
+            {
+                flags.push_back("PSH");
+                pc->c->tcp_psh++;
+            }
+            if(tcph->rst != 0)
+            {
+                flags.push_back("RST");
+                pc->c->tcp_rst++;
+            }
+            if(tcph->syn != 0)
+            {
+                flags.push_back("SYN");
+                pc->c->tcp_syn++;
+            }
+            if(tcph->fin != 0)
+            {
+                flags.push_back("FIN");
+                pc->c->tcp_fin++;
+            }
+            if(tcph->ack != 0 && tcph->syn != 0)
+            {
+                pc->c->tcp_synack++;
+            }
             tcp_seg.flags = flags;
-
+            pc->pushTCPSegment(tcp_sess_min, tcp_seg);
         }
         else if(iph->protocol == 17)
         {
+            pc->c->l4_frames++;
+            pc->c->l4_traffic += (buflen - sizeof(struct ethhdr) - iphdrlen);
+            pc->c->udp++;
             struct udphdr *udph = (struct udphdr*) (buffer + iphdrlen + sizeof(struct ethhdr));
             UDPSegment udp_seg;
             udp_seg.dst_port = ntohs(udph->dest);
@@ -135,6 +177,7 @@ void processFrame(unsigned char *buffer, int buflen)
             udp_seg.size = buflen - iphdrlen - sizeof(struct ethhdr);
             udp_seg.src_port = ntohs(udph->source);
             udp_seg.timestamp = getCurrentDateTime();
+            pc->pushUDPSegment(udp_seg);
         }
     }
 }
@@ -187,6 +230,8 @@ int main(int argc, char *argv[])
         close(sock_r);
         return -1;
     }
+
+    pc = new PostgreSQLCache();
 
     unsigned char *buffer = (unsigned char *) malloc(BUFSIZE);
     while(true)

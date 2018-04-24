@@ -9,6 +9,8 @@ PostgreSQLCache::PostgreSQLCache()
     unsafeURLs = db->getUnsafeURLs();
     arpTable = db->getARPTable();
     activeTCPSessions = db->getActiveTCPSessions();
+
+    // create thread to insert to db
 }
 
 PostgreSQLCache::~PostgreSQLCache()
@@ -56,7 +58,7 @@ bool PostgreSQLCache::isIPSafe(std::string &ip)
        return true;
 }
 
-double PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData)
+unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData)
 {
 
 }
@@ -69,10 +71,12 @@ void PostgreSQLCache::bulkInsertTCPSegments()
 
 void PostgreSQLCache::bulkInsertUDPSegments()
 {
-
+    db->insertUDPSegments(udpSegments);
+    udpSegments.clear();
 }
 
 void PostgreSQLCache::bulkInsertICMPSegments()
 {
-
+    db->insertICMPSegments(icmpSegments);
+    icmpSegments.clear();
 }
