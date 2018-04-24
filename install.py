@@ -121,6 +121,25 @@ class UnsafeIP(base):
 		self.ip = ip
 
 
+class UDPSegment(base):
+	__tablename__ = 'udp_segment'
+	id = Column(Integer, primary_key=True, nullable=False)
+	ip_src = Column(String, nullable=False)
+	src_port = Column(Integer, nullable=False)
+	ip_dst = Column(String, nullable=False)
+	dst_port = Column(Integer, nullable=False)
+	size = Column(Integer, nullable=False)
+	timestamp = Column(DateTime, nullable=False)
+	
+	def __init__(self, ip_src, src_port, ip_dst, dst_port, size, timestamp):
+		self.ip_src = ip_src
+		self.src_port = src_port
+		self.ip_dst = ip_dst
+		self.dst_port = dst_port
+		self.size = size
+		self.timestamp = timestamp
+	
+
 Session = sessionmaker(db)  
 session = Session()
 base.metadata.create_all(db)
