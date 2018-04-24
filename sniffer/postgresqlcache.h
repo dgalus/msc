@@ -1,6 +1,7 @@
 #ifndef POSTGRESQLCACHE_H
 #define POSTGRESQLCACHE_H
 
+#include <algorithm>
 #include <string>
 #include <thread>
 #include <vector>
@@ -19,13 +20,15 @@ public:
     bool isDomainSafe(std::string& domain);
     bool isURLSafe(std::string& url);
     bool isIPSafe(std::string& ip);
+    Counters* c;
+
 private:
     double getTCPSessionId(TCPSessionMin sessionData);
     void bulkInsertTCPSegments();
     void bulkInsertUDPSegments();
     void bulkInsertICMPSegments();
 
-    PostgresqlDatabase db;
+    PostgresqlDatabase* db;
     std::vector<TCPSegment> tcpSegments;
     std::vector<ICMPSegment> icmpSegments;
     std::vector<UDPSegment> udpSegments;

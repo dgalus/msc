@@ -19,11 +19,11 @@
 #include "utils.h"
 #include "arphdr.h"
 #include "structures.h"
-#include "postgresqldatabase.h"
 #include "postgresqlcache.h"
 
 #define BUFSIZE 65536
 
+PostgreSQLCache pc();
 
 void processFrame(unsigned char *buffer, int buflen)
 {
