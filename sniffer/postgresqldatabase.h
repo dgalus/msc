@@ -18,7 +18,7 @@ public:
     void insertNewTCPSessions(std::vector<TCPSession> sessions);
     void insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments);
     std::vector<std::pair<TCPSessionMin, unsigned int>> getActiveTCPSessions();
-    void closeTCPSessions(std::vector<unsigned int> sessiondIds);
+    void closeTCPSessions(std::vector<unsigned int> sessionIds);
     bool executeQuery(std::string query);
 private:
     pqxx::connection* conn;

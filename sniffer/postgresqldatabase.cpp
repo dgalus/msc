@@ -37,10 +37,25 @@ std::vector<std::string> PostgresqlDatabase::getUnsafeURLs()
 
 void PostgresqlDatabase::insertNewTCPSessions(std::vector<TCPSession> sessions)
 {
-
+    if(sessions.size() > 0)
+    {
+        std::string query = "insert into tcp_session (ip_src, src_port, ip_dst, dst_port, is_active, first_segm_tstmp, last_segm_tstmp, remote_geolocation) values ";
+        for(int i = 0; i < sessions.size(); i++)
+        {
+            query += "('" + sessions[i].ip_src + "', " + std::to_string(sessions[i].src_port) + ", '"
+                    + sessions[i].ip_dst + "', " + std::to_string(sessions[i].dst_port)
+                    + ", " + ((sessions[i].is_active) ? "TRUE" : "FALSE") + ", '" + sessions[i].first_segm_tstmp + "', '"
+                    + sessions[i].last_segm_tstmp + "' , '" + sessions[i].remote_geolocation + "')";
+            if(i < sessions.size()-1)
+                query += ", ";
+            else
+                query += "; ";
+        }
+        executeQuery(query);
+    }
 }
 
-void PostgresqlDatabase::insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment> > segments)
+void PostgresqlDatabase::insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments)
 {
 
 }
@@ -65,9 +80,18 @@ std::vector<std::pair<TCPSessionMin, unsigned int>> PostgresqlDatabase::getActiv
     return ret;
 }
 
-void PostgresqlDatabase::closeTCPSessions(std::vector<unsigned int> sessiondIds)
+void PostgresqlDatabase::closeTCPSessions(std::vector<unsigned int> sessionIds)
 {
-
+    std::string query = "update tcp_session set is_active = false where id in (";
+    for(int i = 0; i < sessionIds.size(); i++)
+    {
+        query += std::to_string(sessionIds[i]);
+        if(i <sessionIds.size() - 1)
+            query += ", ";
+        else
+            query += ");";
+    }
+    executeQuery(query);
 }
 
 bool PostgresqlDatabase::executeQuery(std::string query)

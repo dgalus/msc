@@ -14,7 +14,7 @@ public:
     virtual void insertNewTCPSessions(std::vector<TCPSession> sessions) = 0;
     virtual void insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments) = 0;
     virtual std::vector<std::pair<TCPSessionMin, unsigned int>> getActiveTCPSessions() = 0;
-    virtual void closeTCPSessions(std::vector<unsigned int> sessiondIds) = 0;
+    virtual void closeTCPSessions(std::vector<unsigned int> sessionIds) = 0;
     virtual bool executeQuery(std::string query) = 0;
 };
 

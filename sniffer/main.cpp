@@ -146,6 +146,25 @@ int main(int argc, char *argv[])
 
     PostgresqlDatabase db;
     db.getActiveTCPSessions();
+    std::vector<TCPSession> sessions;
+    TCPSession ts;
+    ts.dst_port = 1;
+    ts.first_segm_tstmp = getCurrentDateTime();
+    ts.ip_dst = "32.43.65.25";
+    ts.ip_src = "192.168.1.1";
+    ts.is_active = true;
+    ts.last_segm_tstmp = getCurrentDateTime();
+    ts.remote_geolocation = "EN";
+    ts.src_port = 432;
+    for(int i = 0; i < 5; i++)
+        sessions.push_back(ts);
+    std::vector<unsigned int> ids;
+    for(unsigned int i = 2; i < 7; i++)
+        ids.push_back(i);
+    db.insertNewTCPSessions(sessions);
+    db.closeTCPSessions(ids);
+
+
 
     if(argc < 2)
     {
