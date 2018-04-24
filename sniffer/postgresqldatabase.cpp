@@ -115,6 +115,19 @@ void PostgresqlDatabase::insertTCPSegments(std::vector<std::pair<unsigned int, T
     }
 }
 
+void PostgresqlDatabase::insertCounters(Counters counters, std::string timestamp)
+{
+    std::string query = "insert into counter (timestamp, tcp_syn, tcp_ack, tcp_synack, tcp_psh, tcp_rst, tcp_fin, tcp, "
+                        "ip, arp, udp, icmp, l2_traffic, l3_traffic, l4_traffic, l2_frames, l3_frames, l4_frames) values ("
+                        "'" + timestamp + "', " + std::to_string(counters.tcp_syn) + ", " + std::to_string(counters.tcp_ack) + ", "
+                        "" + std::to_string(counters.tcp_synack) + ", " + std::to_string(counters.tcp_psh) + ", " + std::to_string(counters.tcp_rst) + ", "
+                        "" + std::to_string(counters.tcp_fin) + ", " + std::to_string(counters.tcp) + ", " + std::to_string(counters.ip) + ", "
+                        "" + std::to_string(counters.arp) + ", " + std::to_string(counters.udp) + ", " + std::to_string(counters.icmp) + ", "
+                        "" + std::to_string(counters.l2_traffic) + ", " + std::to_string(counters.l3_traffic) + ", " + std::to_string(counters.l4_traffic) + ", "
+                        "" + std::to_string(counters.l2_frames) + ", " + std::to_string(counters.l3_frames) + ", " + std::to_string(counters.l4_frames) + ");";
+    executeQuery(query);
+}
+
 std::vector<std::pair<TCPSessionMin, unsigned int>> PostgresqlDatabase::getActiveTCPSessions()
 {
     std::vector<std::pair<TCPSessionMin, unsigned int>> ret;
