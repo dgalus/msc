@@ -93,6 +93,34 @@ class TCPSegment(base):
 		self.direction = direction
 		self.session_id = session_id
 
+
+class UnsafeURL(base):
+	__tablename__ = 'unsafe_url'
+	id = Column(Integer, primary_key=True, nullable=False)
+	url = Column(String, nullable=False)
+	
+	def __init__(self, url):
+		self.url = url
+	
+	
+class UnsafeDomain(base):
+	__tablename__ = 'unsafe_domain'
+	id = Column(Integer, primary_key=True, nullable=False)
+	domain = Column(String, nullable=False)
+	
+	def __init__(self, domain):
+		self.domain = domain
+
+
+class UnsafeIP(base):
+	__tablename__ = 'unsafe_ip'
+	id = Column(Integer, primary_key=True, nullable=False)
+	ip = Column(String, nullable=False)
+	
+	def __init__(self, ip):
+		self.ip = ip
+
+
 Session = sessionmaker(db)  
 session = Session()
 base.metadata.create_all(db)
