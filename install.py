@@ -180,7 +180,21 @@ class ProposedIptablesRules(base):
 		self.timestamp = timestamp
 		self.rank = rank
 		
+class Alert(base):
+	__tablename__ = 'alert'
+	id = Column(Integer, primary_key=True, nullable=False)
+	description = Column(String, nullable=False)
+	alert_type = Column(Integer, nullable=False)
+	rank = Column(Integer, nullable=False)
+	timestamp = Column(DateTime, nullable=False)
+	
+	def __init__(self, description, alert_type, rank, timestamp):
+		self.description = description
+		self.alert_type = alert_type
+		self.rank = rank
+		self.timestamp = timestamp
 		
+
 
 Session = sessionmaker(db)  
 session = Session()
