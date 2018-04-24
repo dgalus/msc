@@ -22,17 +22,44 @@ PostgresqlDatabase::~PostgresqlDatabase()
 
 std::vector<std::string> PostgresqlDatabase::getUnsafeDomains()
 {
+    std::vector<std::string> domains;
+    std::string sql = "select domain from unsafe_domain;";
+    pqxx::nontransaction N(*conn);
+    pqxx::result R(N.exec(sql.c_str()));
 
+    for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
+    {
+        domains.push_back(c[0].as<std::string>());
+    }
+    return domains;
 }
 
 std::vector<std::string> PostgresqlDatabase::getUnsafeIPs()
 {
+    std::vector<std::string> ips;
+    std::string sql = "select ip from unsafe_ip;";
+    pqxx::nontransaction N(*conn);
+    pqxx::result R(N.exec(sql.c_str()));
 
+    for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
+    {
+        ips.push_back(c[0].as<std::string>());
+    }
+    return ips;
 }
 
 std::vector<std::string> PostgresqlDatabase::getUnsafeURLs()
 {
+    std::vector<std::string> urls;
+    std::string sql = "select url from unsafe_url;";
+    pqxx::nontransaction N(*conn);
+    pqxx::result R(N.exec(sql.c_str()));
 
+    for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
+    {
+        urls.push_back(c[0].as<std::string>());
+    }
+    return urls;
 }
 
 void PostgresqlDatabase::insertNewTCPSessions(std::vector<TCPSession> sessions)
