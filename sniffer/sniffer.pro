@@ -5,7 +5,8 @@ CONFIG -= qt
 
 SOURCES += \
         main.cpp \
-    postgresqldatabase.cpp
+    postgresqldatabase.cpp \
+    postgresqlcache.cpp
 
 HEADERS += \
     arphdr.h \
@@ -13,4 +14,5 @@ HEADERS += \
     structures.h \
     counters.h \
     postgresqldatabase.h \
-    idatabase.h
+    idatabase.h \
+    postgresqlcache.h

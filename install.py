@@ -1,6 +1,7 @@
 import datetime
+import os
 from sqlalchemy import create_engine  
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, Boolean, String, Integer, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base  
 from sqlalchemy.orm import sessionmaker
 
@@ -51,7 +52,46 @@ class Counter(base):
 		self.l2_frames = l2_frames
 		self.l3_frames = l3_frames
 		self.l4_frames = l4_frames
+
+
+class TCPSession(base):
+	__tablename__ = 'tcp_session'
+	id = Column(Integer, primary_key=True, nullable=False)
+	ip_src = Column(String, nullable=False)
+	src_port = Column(Integer, nullable=False)
+	ip_dst = Column(String, nullable=False)
+	dst_port = Column(Integer, nullable=False)
+	is_active = Column(Boolean, nullable=False)
+	first_segm_tstmp = Column(DateTime, nullable=False)
+	last_segm_tstmp = Column(DateTime, nullable=False)
+	remote_geolocation = Column(String, nullable=False)
 		
+	def __init__(self, ip_src, src_port, ip_dst, dst_port, is_active, first_segm_tstmp, last_segm_tstmp, remote_geolocation):
+		self.ip_src = ip_src
+		self.src_port = src_port
+		self.ip_dst = ip_dst
+		self.dst_port = dst_port
+		self.is_active = is_active
+		self.first_segm_tstmp = first_segm_tstmp
+		self.last_segm_tstmp = last_segm_tstmp
+		self.remote_geolocation = remote_geolocation
+
+
+class TCPSegment(base):
+	__tablename__ = 'tcp_segment'
+	id = Column(Integer, primary_key=True, nullable=False)
+	flags = Column(String, nullable=False)
+	size = Column(Integer, nullable=False)
+	timestamp = Column(DateTime, nullable=False)
+	direction = Column(Integer, nullable=False)
+	session_id = Column(Integer, ForeignKey('tcp_session.id'))
+	
+	def __init__(self, flags, size, timestamp, direction, session_id):
+		self.flags = flags
+		self.size = size
+		self.timestamp = timestamp
+		self.direction = direction
+		self.session_id = session_id
 
 Session = sessionmaker(db)  
 session = Session()
