@@ -42,7 +42,7 @@ bool PostgreSQLCache::isDomainSafe(std::string &domain)
 
 bool PostgreSQLCache::isURLSafe(std::string &url)
 {
-    if(std::find(unsafeURLs.begin(), unsafeURLs.end(), domain) != unsafeURLs.end())
+    if(std::find(unsafeURLs.begin(), unsafeURLs.end(), url) != unsafeURLs.end())
        return false;
     else
        return true;
@@ -50,7 +50,7 @@ bool PostgreSQLCache::isURLSafe(std::string &url)
 
 bool PostgreSQLCache::isIPSafe(std::string &ip)
 {
-    if(std::find(unsafeIPs.begin(), unsafeIPs.end(), domain) != unsafeIPs.end())
+    if(std::find(unsafeIPs.begin(), unsafeIPs.end(), ip) != unsafeIPs.end())
        return false;
     else
        return true;
