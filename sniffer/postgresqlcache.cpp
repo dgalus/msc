@@ -21,7 +21,8 @@ PostgreSQLCache::~PostgreSQLCache()
 
 void PostgreSQLCache::pushTCPSegment(TCPSessionMin session, TCPSegment segment)
 {
-
+    unsigned int id = getTCPSessionId(session);
+    //tcpSegments.push_back();
 }
 
 void PostgreSQLCache::pushICMPSegment(ICMPSegment segment)
@@ -60,7 +61,24 @@ bool PostgreSQLCache::isIPSafe(std::string &ip)
 
 unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData)
 {
-
+    for(auto it = activeTCPSessions.begin(); it != activeTCPSessions.end(); it++)
+    {
+        if((it->first.ip_src == sessionData.ip_src && it->first.ip_dst == sessionData.ip_dst && it->first.src_port == sessionData.src_port && it->first.dst_port == sessionData.dst_port)
+            || (it->first.ip_src == sessionData.ip_dst && it->first.ip_dst == sessionData.ip_src && it->first.src_port == sessionData.dst_port && it->first.dst_port == sessionData.src_port))
+        {
+            return it->second;
+        }
+    }
+    TCPSession ts;
+    ts.dst_port = sessionData.dst_port;
+    ts.first_segm_tstmp = getCurrentDateTime();
+    ts.ip_dst = sessionData.ip_dst;
+    ts.ip_src = sessionData.ip_src;
+    ts.is_active = true;
+    ts.last_segm_tstmp = ts.first_segm_tstmp;
+    ts.src_port = sessionData.src_port;
+    ts.remote_geolocation = "UNKNOWN";      // TODO
+    //db->
 }
 
 void PostgreSQLCache::bulkInsertTCPSegments()

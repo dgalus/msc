@@ -5,9 +5,11 @@
 #include <iostream>
 #include <string>
 #include <pqxx/pqxx>
-#include "idatabase.h"
 
-class PostgresqlDatabase : public IDatabase
+#include "structures.h"
+#include "counters.h"
+
+class PostgresqlDatabase
 {
 public:
     PostgresqlDatabase();
@@ -18,6 +20,7 @@ public:
     std::vector<std::pair<std::string, std::string>> getARPTable();
     void insertNewTCPSessions(std::vector<TCPSession> sessions);
     void insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments);
+    unsigned int insertTCPSession(TCPSession session);
     void insertUDPSegments(std::vector<UDPSegment> segments);
     void insertICMPSegments(std::vector<ICMPSegment> segments);
     void insertCounters(Counters counters, std::string timestamp);

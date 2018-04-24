@@ -78,7 +78,7 @@ void PostgresqlDatabase::insertNewTCPSessions(std::vector<TCPSession> sessions)
     if(sessions.size() > 0)
     {
         std::string query = "insert into tcp_session (ip_src, src_port, ip_dst, dst_port, is_active, first_segm_tstmp, last_segm_tstmp, remote_geolocation) values ";
-        for(int i = 0; i < sessions.size(); i++)
+        for(unsigned int i = 0; i < sessions.size(); i++)
         {
             query += "('" + sessions[i].ip_src + "', " + std::to_string(sessions[i].src_port) + ", '"
                     + sessions[i].ip_dst + "', " + std::to_string(sessions[i].dst_port)
@@ -98,7 +98,7 @@ void PostgresqlDatabase::insertTCPSegments(std::vector<std::pair<unsigned int, T
     if(segments.size() > 0)
     {
         std::string query = "insert into tcp_segment (flags, size, timestamp, direction, session_id) values ";
-        for(int i = 0; i < segments.size(); i++)
+        for(unsigned int i = 0; i < segments.size(); i++)
         {
             std::string flags = "";
             for(auto it = segments[i].second.flags.begin(); it != segments[i].second.flags.end(); it++)
@@ -115,12 +115,34 @@ void PostgresqlDatabase::insertTCPSegments(std::vector<std::pair<unsigned int, T
     }
 }
 
+unsigned int PostgresqlDatabase::insertTCPSession(TCPSession session)
+{
+    std::string query = "insert into tcp_session (id, ip_src, src_port, ip_dst, dst_port, is_active, first_segm_tstmp, last_segm_tstmp, remote_geolocation) values (DEFAULT, "
+                        "'" + session.ip_src + ", " + std::to_string(session.src_port) + ", '" + session.ip_dst + "', " + std::to_string(session.dst_port) + ", "
+                        + ((session.is_active) ? "TRUE" : "FALSE") + ", '" + session.first_segm_tstmp + "', '" + session.last_segm_tstmp + "', '" + session.remote_geolocation + "') returning id";
+    try{
+        pqxx::work W(*conn);
+        pqxx::result R(W.exec(query.c_str()));
+        W.commit();
+        for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
+        {
+            return c[0].as<unsigned int>();
+        }
+    }
+    catch(const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+        return 0;
+    }
+    return 0;
+}
+
 void PostgresqlDatabase::insertUDPSegments(std::vector<UDPSegment> segments)
 {
     if(segments.size() > 0)
     {
         std::string query = "insert into udp_segment (ip_src, src_port, ip_dst, dst_port, size, timestamp) values ";
-        for(int i = 0; i < segments.size(); i++)
+        for(unsigned int i = 0; i < segments.size(); i++)
         {
             query += "('" + segments[i].ip_src + "', " + std::to_string(segments[i].src_port) + ", '" + segments[i].ip_dst + "', "
                     "" + std::to_string(segments[i].dst_port) + ", " + std::to_string(segments[i].size) + ", '" + segments[i].timestamp + "')";
@@ -138,7 +160,7 @@ void PostgresqlDatabase::insertICMPSegments(std::vector<ICMPSegment> segments)
     if(segments.size() > 0)
     {
         std::string query = "insert into icmp_segment (ip_src, ip_dst, icmp_type, timestamp) values ";
-        for(int i = 0; i < segments.size(); i++)
+        for(unsigned int i = 0; i < segments.size(); i++)
         {
             query += "('" + segments[i].ip_src + "', '" + segments[i].ip_dst + "', " + std::to_string(segments[i].type) + ", '" + segments[i].timestamp + "')";
             if(i < segments.size()-1)
@@ -186,7 +208,7 @@ std::vector<std::pair<TCPSessionMin, unsigned int>> PostgresqlDatabase::getActiv
 void PostgresqlDatabase::closeTCPSessions(std::vector<unsigned int> sessionIds)
 {
     std::string query = "update tcp_session set is_active = false where id in (";
-    for(int i = 0; i < sessionIds.size(); i++)
+    for(unsigned int i = 0; i < sessionIds.size(); i++)
     {
         query += std::to_string(sessionIds[i]);
         if(i <sessionIds.size() - 1)

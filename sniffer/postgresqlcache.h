@@ -8,6 +8,7 @@
 
 #include "structures.h"
 #include "postgresqldatabase.h"
+#include "utils.h"
 
 class PostgreSQLCache
 {

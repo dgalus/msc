@@ -16,7 +16,6 @@
 
 #include <iostream>
 
-#include "utils.h"
 #include "arphdr.h"
 #include "structures.h"
 #include "postgresqlcache.h"
