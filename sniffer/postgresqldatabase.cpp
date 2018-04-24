@@ -2,7 +2,22 @@
 
 PostgresqlDatabase::PostgresqlDatabase()
 {
+    try {
+       conn = new pqxx::connection("dbname = sniffer user = sniffer password = sniffer hostaddr = 127.0.0.1 port = 5432");
+       if (!conn->is_open()) {
+          std::cout << "Can't open database" << std::endl;
+          exit(2);
+       }
+    } catch (const std::exception &e) {
+       std::cerr << e.what() << std::endl;
+       exit(3);
+    }
+}
 
+PostgresqlDatabase::~PostgresqlDatabase()
+{
+    conn->disconnect();
+    delete conn;
 }
 
 std::vector<std::string> PostgresqlDatabase::getUnsafeDomains()

@@ -1,14 +1,18 @@
 #ifndef POSTGRESQLDATABASE_H
 #define POSTGRESQLDATABASE_H
 
+#include <fstream>
 #include <iostream>
+#include <string>
 #include <pqxx/pqxx>
 #include "idatabase.h"
+#include "json.h"
 
 class PostgresqlDatabase : public IDatabase
 {
 public:
     PostgresqlDatabase();
+    ~PostgresqlDatabase();
     std::vector<std::string> getUnsafeDomains();
     std::vector<std::string> getUnsafeIPs();
     std::vector<std::string> getUnsafeURLs();
@@ -18,7 +22,7 @@ public:
     void closeTCPSessions(std::vector<unsigned int> sessiondIds);
     bool executeQuery(std::string query);
 private:
-    pqxx::connection conn;
+    pqxx::connection* conn;
 };
 
 #endif // POSTGRESQLDATABASE_H

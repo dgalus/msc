@@ -19,6 +19,8 @@
 #include "utils.h"
 #include "arphdr.h"
 #include "structures.h"
+#include "postgresqldatabase.h"
+#include "postgresqlcache.h"
 
 #define BUFSIZE 65536
 
@@ -141,6 +143,10 @@ int main(int argc, char *argv[])
 {
     int sock_r;
     int buflen;
+
+    PostgresqlDatabase db;
+    std::vector<unsigned int> test;
+    db.closeTCPSessions(test);
 
     if(argc < 2)
     {

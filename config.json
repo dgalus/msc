@@ -20,5 +20,10 @@
             "smtp_server" : "example.org",
             "smtp_port" : 25
         }
+    },
+    "database" : {
+        "user" : "sniffer",
+        "password" : "sniffer",
+        "db" : "sniffer"
     }
 }
