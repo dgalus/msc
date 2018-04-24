@@ -18,6 +18,7 @@
 
 #include "utils.h"
 #include "arphdr.h"
+#include "structures.h"
 
 #define BUFSIZE 65536
 
@@ -25,13 +26,6 @@
 void processFrame(unsigned char *buffer)
 {
     struct ethhdr *eth = (struct ethhdr *)(buffer);
-    char source_addr[18];
-    char destination_addr[18];
-    snprintf(source_addr, 18, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", eth->h_source[0], eth->h_source[1], eth->h_source[2], eth->h_source[3], eth->h_source[4], eth->h_source[5]);
-    snprintf(destination_addr, 18, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", eth->h_dest[0], eth->h_dest[1], eth->h_dest[2], eth->h_dest[3], eth->h_dest[4], eth->h_dest[5]);
-    std::string source = std::string(source_addr);
-    std::string destination = std::string(destination_addr);
-
     if(source == "00:00:00:00:00:00" && destination == "00:00:00:00:00:00")
         return;
 
@@ -40,8 +34,6 @@ void processFrame(unsigned char *buffer)
         struct arphdr_t *arph = (struct arphdr_t *)(buffer + sizeof(struct ethhdr));
         if(ntohs(arph->htype) == 1 && ntohs(arph->ptype) == 0x0800)
         {
-            rapidjson::Value arp(rapidjson::kObjectType);
-
             char sender_mac[18];
             char target_mac[18];
             char sender_ip[16];
@@ -51,7 +43,7 @@ void processFrame(unsigned char *buffer)
             snprintf(sender_ip, 16, "%d.%d.%d.%d", arph->spa[0], arph->spa[1], arph->spa[2], arph->spa[3]);
             snprintf(target_ip, 16, "%d.%d.%d.%d", arph->tpa[0], arph->tpa[1], arph->tpa[2], arph->tpa[3]);
 
-            rapidjson::Value sender_hw_val;
+            /*rapidjson::Value sender_hw_val;
             sender_hw_val.SetString(std::string(sender_mac).c_str(), std::string(sender_mac).length(), allocator);
             arp.AddMember("sender_hw", sender_hw_val, allocator);
 
@@ -77,23 +69,18 @@ void processFrame(unsigned char *buffer)
 
             rapidjson::Value operation_val;
             operation_val.SetInt(ntohs(arph->oper));
-            arp.AddMember("operation", operation_val, allocator);
-
-            d.AddMember("arp", arp, allocator);
+            arp.AddMember("operation", operation_val, allocator);*/
         }
     }
-    else if(eth->h_proto == 0x0008) // IP
+    else if(eth->h_proto == 0x0008)
     {
         unsigned short iphdrlen;
         struct sockaddr_in source_addr;
         struct sockaddr_in destination_addr;
-
         struct iphdr *iph = (struct iphdr*) (buffer + sizeof(struct ethhdr));
         iphdrlen =iph->ihl*4;
-
         memset(&source_addr, 0, sizeof(source_addr));
         source_addr.sin_addr.s_addr = iph->saddr;
-
         memset(&destination_addr, 0, sizeof(destination_addr));
         destination_addr.sin_addr.s_addr = iph->daddr;
 
@@ -103,81 +90,45 @@ void processFrame(unsigned char *buffer)
         if(iph->protocol == 1)
         {
             struct icmphdr *icmph = (struct icmphdr *)(buffer + iphdrlen + sizeof(struct ethhdr));
-
-            rapidjson::Value icmp(rapidjson::kObjectType);
-
-            rapidjson::Value type_val;
-            type_val.SetUint((unsigned int) icmph->type);
-            icmp.AddMember("type", type_val, allocator);
-
-            d.AddMember("icmp", icmp, allocator);
+            ICMPSegment icmp_seg;
+            icmp_seg.ip_dst = destination_ip;
+            icmp_seg.ip_src = source_ip;
+            icmp_seg.timestamp = getCurrentDateTime();
+            icmp_seg.type = icmph->type;
         }
         else if(iph->protocol == 6)
         {
             struct tcphdr *tcph = (struct tcphdr*) (buffer + iphdrlen + sizeof(struct ethhdr));
+            TCPSessionMin tcp_sess_min;
+            tcp_sess_min.dst_port = ntohs(tcph->dest);
+            tcp_sess_min.ip_dst = destination_ip;
+            tcp_sess_min.ip_src = source_ip;
+            tcp_sess_min.src_port = ntohs(tcph->source);
+            TCPSegment tcp_seg;
+            tcp_seg.direction = TCPSegmentDirection::UNKNOWN;
+            tcp_seg.timestamp = getCurrentDateTime();
+            tcp_seg.size = strlen(buffer) - iphdrlen - sizeof(struct ethhdr);
+            std::vector<std::string> flags;
+            if(tcph->ack != 0) flags.push_back("ACK");
+            if(tcph->psh != 0) flags.push_back("PSH");
+            if(tcph->rst != 0) flags.push_back("RST");
+            if(tcph->syn != 0) flags.push_back("SYN");
+            if(tcph->fin != 0) flags.push_back("FIN");
+            tcp_seg.flags = flags;
 
-            rapidjson::Value tcp(rapidjson::kObjectType);
-
-            rapidjson::Value src_port_val;
-            src_port_val.SetUint(ntohs(tcph->source));
-            tcp.AddMember("src_port", src_port_val, allocator);
-
-            rapidjson::Value dest_port_val;
-            dest_port_val.SetUint(ntohs(tcph->dest));
-            tcp.AddMember("dest_port", dest_port_val, allocator);
-
-            rapidjson::Value seq_val;
-            seq_val.SetUint(ntohs(tcph->seq));
-            tcp.AddMember("seq", seq_val, allocator);
-
-            rapidjson::Value ack_seq_val;
-            ack_seq_val.SetUint(ntohs(tcph->ack_seq));
-            tcp.AddMember("ack_seq", ack_seq_val, allocator);
-
-            rapidjson::Value urg_flag_val;
-            urg_flag_val.SetBool((tcph->urg != 0));
-            tcp.AddMember("urg", urg_flag_val, allocator);
-
-            rapidjson::Value ack_flag_val;
-            ack_flag_val.SetBool((tcph->ack != 0));
-            tcp.AddMember("ack", ack_flag_val, allocator);
-
-            rapidjson::Value psh_flag_val;
-            psh_flag_val.SetBool((tcph->psh != 0));
-            tcp.AddMember("psh", psh_flag_val, allocator);
-
-            rapidjson::Value rst_flag_val;
-            rst_flag_val.SetBool((tcph->rst != 0));
-            tcp.AddMember("rst", rst_flag_val, allocator);
-
-            rapidjson::Value syn_flag_val;
-            syn_flag_val.SetBool((tcph->syn != 0));
-            tcp.AddMember("syn", syn_flag_val, allocator);
-
-            rapidjson::Value fin_flag_val;
-            fin_flag_val.SetBool((tcph->fin != 0));
-            tcp.AddMember("fin", fin_flag_val, allocator);
-
-            d.AddMember("tcp", tcp, allocator);
         }
         else if(iph->protocol == 17)
         {
             struct udphdr *udph = (struct udphdr*) (buffer + iphdrlen + sizeof(struct ethhdr));
-
-            rapidjson::Value udp(rapidjson::kObjectType);
-
-            rapidjson::Value src_port_val;
-            src_port_val.SetUint(ntohs(udph->source));
-            udp.AddMember("src_port", src_port_val, allocator);
-
-            rapidjson::Value dest_port_val;
-            dest_port_val.SetUint(ntohs(udph->dest));
-            udp.AddMember("dest_port", dest_port_val, allocator);
-
-            d.AddMember("udp", udp, allocator);
+            UDPSegment udp_seg;
+            udp_seg.dst_port = ntohs(udph->dest);
+            udp_seg.ip_dst = destination_ip;
+            udp_seg.ip_src = source_ip;
+            udp_seg.size = strlen(buffer) - iphdrlen - sizeof(struct ethhdr);
+            udp_seg.src_port = ntohs(udph->source);
+            udp_seg.timestamp = getCurrentDateTime();
         }
     }
-    std::string datetime = getCurrentDateTime();
 }
 
 int main(int argc, char *argv[])

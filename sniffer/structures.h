@@ -5,6 +5,7 @@
 #include <vector>
 
 enum class TCPSegmentDirection {
+    UNKNOWN,
     FROM_SRC_TO_DST,
     FROM_DST_TO_SRC
 };
@@ -34,6 +35,25 @@ struct TCPSegment {
     TCPSegmentDirection direction;
 };
 
+struct ICMPSegment {
+    std::string ip_src;
+    std::string ip_dst;
+    uint8_t type;
+    std::string timestamp;
+};
+
+struct UDPSegment {
+    std::string ip_src;
+    uint16_t src_port;
+    std::string ip_dst;
+    uint16_t dst_port;
+    int size;
+    std::string timestamp;
+};
+
+struct ARPPacket {
+
+};
 
 
 #endif // STRUCTURES_H
