@@ -4,11 +4,10 @@
 #include <string>
 #include <vector>
 
-enum class TCPSegmentDirection {
-    UNKNOWN,
-    FROM_SRC_TO_DST,
-    FROM_DST_TO_SRC
-};
+
+#define UNKNOWN 0
+#define FROM_SRC_TO_DST 1
+#define FROM_DST_TO_SRC 2
 
 struct TCPSession {
     std::string ip_src;
@@ -32,7 +31,7 @@ struct TCPSegment {
     std::vector<std::string> flags;
     int size;
     std::string timestamp;
-    TCPSegmentDirection direction;
+    int direction;
 };
 
 struct ICMPSegment {

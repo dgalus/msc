@@ -113,7 +113,7 @@ void processFrame(unsigned char *buffer, int buflen)
             tcp_sess_min.ip_src = source_ip;
             tcp_sess_min.src_port = ntohs(tcph->source);
             TCPSegment tcp_seg;
-            tcp_seg.direction = TCPSegmentDirection::UNKNOWN;
+            tcp_seg.direction = UNKNOWN;
             tcp_seg.timestamp = getCurrentDateTime();
             tcp_seg.size = buflen - iphdrlen - sizeof(struct ethhdr);
             std::vector<std::string> flags;

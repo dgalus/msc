@@ -57,7 +57,24 @@ void PostgresqlDatabase::insertNewTCPSessions(std::vector<TCPSession> sessions)
 
 void PostgresqlDatabase::insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments)
 {
-
+    if(segments.size() > 0)
+    {
+        std::string query = "insert into tcp_segment (flags, size, timestamp, direction, session_id) values ";
+        for(int i = 0; i < segments.size(); i++)
+        {
+            std::string flags = "";
+            for(auto it = segments[i].second.flags.begin(); it != segments[i].second.flags.end(); it++)
+                flags += *it + " ";
+            query += "('" + flags + "', " + std::to_string(segments[i].second.size) + ", '"
+                    + segments[i].second.timestamp + "', " + std::to_string(segments[i].second.direction) + ", "
+                    + std::to_string(segments[i].first) + ")";
+            if(i < segments.size()-1)
+                query += ", ";
+            else
+                query += "; ";
+        }
+        executeQuery(query);
+    }
 }
 
 std::vector<std::pair<TCPSessionMin, unsigned int>> PostgresqlDatabase::getActiveTCPSessions()
