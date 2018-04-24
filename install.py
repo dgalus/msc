@@ -155,6 +155,16 @@ class ICMPSegment(base):
 		self.timestamp = timestamp
 		
 
+class ARP(base):
+	__tablename__ = 'arp'
+	id = Column(Integer, primary_key=True, nullable=False)
+	ip = Column(String, nullable=False)
+	mac = Column(String, nullable=False)
+	
+	def __init__(self, ip, mac):
+		self.ip = ip
+		self.mac = mac
+
 
 Session = sessionmaker(db)  
 session = Session()
