@@ -62,6 +62,17 @@ std::vector<std::string> PostgresqlDatabase::getUnsafeURLs()
     return urls;
 }
 
+std::vector<std::pair<std::string, std::string>> PostgresqlDatabase::getARPTable()
+{
+    std::vector<std::pair<std::string, std::string>> arpTable;
+    std::string query = "select * from arp;";
+    pqxx::nontransaction N(*conn);
+    pqxx::result R(N.exec(query.c_str()));
+    for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
+        arpTable.push_back(std::pair<std::string, std::string>(c[0].as<std::string>(), c[1].as<std::string>()));
+    return arpTable;
+}
+
 void PostgresqlDatabase::insertNewTCPSessions(std::vector<TCPSession> sessions)
 {
     if(sessions.size() > 0)

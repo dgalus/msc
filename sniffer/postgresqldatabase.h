@@ -15,6 +15,7 @@ public:
     std::vector<std::string> getUnsafeDomains();
     std::vector<std::string> getUnsafeIPs();
     std::vector<std::string> getUnsafeURLs();
+    std::vector<std::pair<std::string, std::string>> getARPTable();
     void insertNewTCPSessions(std::vector<TCPSession> sessions);
     void insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments);
     std::vector<std::pair<TCPSessionMin, unsigned int>> getActiveTCPSessions();
