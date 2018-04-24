@@ -138,7 +138,23 @@ class UDPSegment(base):
 		self.dst_port = dst_port
 		self.size = size
 		self.timestamp = timestamp
+
+
+class ICMPSegment(base):
+	__tablename__ = 'icmp_segment'
+	id = Column(Integer, primary_key=True, nullable=False)
+	ip_src = Column(String, nullable=False)
+	ip_dst = Column(String, nullable=False)
+	icmp_type = Column(Integer, nullable=False)
+	timestamp = Column(DateTime, nullable=False)
 	
+	def __init__(self, ip_src, ip_dst, icmp_type, timestamp):
+		self.ip_src = ip_src
+		self.ip_dst = ip_dst
+		self.icmp_type = icmp_type
+		self.timestamp = timestamp
+		
+
 
 Session = sessionmaker(db)  
 session = Session()
