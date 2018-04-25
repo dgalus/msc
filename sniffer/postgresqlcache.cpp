@@ -167,7 +167,7 @@ void PostgreSQLCache::insertLoop()
     try{
         while(true)
         {
-            sleep(10);
+            sleep(60);
             bulkInsertICMPSegments();
             bulkInsertUDPSegments();
             bulkInsertTCPSegments();
