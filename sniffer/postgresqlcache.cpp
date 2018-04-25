@@ -115,6 +115,23 @@ void PostgreSQLCache::bulkInsertTCPSegments()
     tcpSegments.clear();
     tcpSegmentsMutex.unlock();
     db->insertTCPSegments(my_tcpSegments);
+    std::vector<int> sessionIds;
+    std::vector<std::pair<int, std::string>> newSessionTimestamps;
+    for(auto it = my_tcpSegments.begin(); it != my_tcpSegments.end(); it++)
+        sessionIds.push_back(it->first);
+    std::sort(sessionIds.begin(), sessionIds.end());
+    sessionIds.erase(std::unique(sessionIds.begin(), sessionIds.end()), sessionIds.end());
+    for(auto it = sessionIds.begin(); it != sessionIds.end(); it++)
+    {
+        std::multiset<std::string> timestamps;
+        for(auto iter = my_tcpSegments.begin(); iter != my_tcpSegments.end(); iter++)
+        {
+            if(iter->first == *it)
+                timestamps.insert(iter->second.timestamp);
+        }
+        newSessionTimestamps.push_back(std::pair<int, std::string>(*it, *timestamps.rbegin()));
+    }
+    db->updateTCPSessionLastTimestamp(newSessionTimestamps);
 }
 
 void PostgreSQLCache::bulkInsertUDPSegments()

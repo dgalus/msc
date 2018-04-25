@@ -24,6 +24,7 @@ public:
     void insertUDPSegments(std::vector<UDPSegment> segments);
     void insertICMPSegments(std::vector<ICMPSegment> segments);
     void insertCounters(Counters counters, std::string timestamp);
+    void updateTCPSessionLastTimestamp(std::vector<std::pair<int, std::string>> newSessionTimestamps);
     std::vector<std::pair<TCPSessionMin, unsigned int>> getActiveTCPSessions();
     void closeTCPSessions(std::vector<unsigned int> sessionIds);
     bool executeQuery(std::string query);

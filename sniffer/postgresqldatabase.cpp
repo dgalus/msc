@@ -185,6 +185,25 @@ void PostgresqlDatabase::insertCounters(Counters counters, std::string timestamp
     executeQuery(query);
 }
 
+void PostgresqlDatabase::updateTCPSessionLastTimestamp(std::vector<std::pair<int, std::string>> newSessionTimestamps)
+{
+    if(newSessionTimestamps.size() > 0){
+        std::string query = "update tcp_session set last_segm_tstmp = case ";
+        for(auto it = newSessionTimestamps.begin(); it != newSessionTimestamps.end(); it++)
+            query += "when id = " + std::to_string(it->first) + " then to_timestamp('" + it->second + "', 'YYYY-MM-DD hh24:mi:ss')::timestamp without time zone ";
+        query += "end where id in (";
+        for(unsigned int i = 0; i < newSessionTimestamps.size(); i++)
+        {
+            query += std::to_string(newSessionTimestamps[i].first);
+            if(i < newSessionTimestamps.size()-1)
+                query += ", ";
+            else
+                query += "); ";
+        }
+        executeQuery(query);
+    }
+}
+
 std::vector<std::pair<TCPSessionMin, unsigned int>> PostgresqlDatabase::getActiveTCPSessions()
 {
     std::vector<std::pair<TCPSessionMin, unsigned int>> ret;
