@@ -98,12 +98,19 @@ unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData, TCPSegm
         sessionsToCloseMutex.lock();
         sessionsToClose.push_back(id);
         sessionsToCloseMutex.unlock();
+        for(int i = 0; i < activeTCPSessions.size(); i++)
+            if(activeTCPSessions.at(i).second == id)
+                activeTCPSessions.erase(activeTCPSessions.begin()+i);
+
     }
     if(std::find(segment->flags.begin(), segment->flags.end(), "FIN") != segment->flags.end())
     {
         sessionsToCloseMutex.lock();
         sessionsToClose.push_back(id);
         sessionsToCloseMutex.unlock();
+        for(int i = 0; i < activeTCPSessions.size(); i++)
+            if(activeTCPSessions.at(i).second == id)
+                activeTCPSessions.erase(activeTCPSessions.begin()+i);
     }
     return id;
 }
