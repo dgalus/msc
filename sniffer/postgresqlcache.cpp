@@ -21,8 +21,8 @@ PostgreSQLCache::~PostgreSQLCache()
 
 void PostgreSQLCache::pushTCPSegment(TCPSessionMin session, TCPSegment segment)
 {
-    unsigned int id = getTCPSessionId(session);
-    //tcpSegments.push_back();
+    unsigned int id = getTCPSessionId(session, &segment);
+    tcpSegments.push_back(std::pair<unsigned int, TCPSegment>(id, segment));
 }
 
 void PostgreSQLCache::pushICMPSegment(ICMPSegment segment)
@@ -59,13 +59,18 @@ bool PostgreSQLCache::isIPSafe(std::string &ip)
        return true;
 }
 
-unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData)
+unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData, TCPSegment* segment)
 {
     for(auto it = activeTCPSessions.begin(); it != activeTCPSessions.end(); it++)
     {
-        if((it->first.ip_src == sessionData.ip_src && it->first.ip_dst == sessionData.ip_dst && it->first.src_port == sessionData.src_port && it->first.dst_port == sessionData.dst_port)
-            || (it->first.ip_src == sessionData.ip_dst && it->first.ip_dst == sessionData.ip_src && it->first.src_port == sessionData.dst_port && it->first.dst_port == sessionData.src_port))
+        if(it->first.ip_src == sessionData.ip_src && it->first.ip_dst == sessionData.ip_dst && it->first.src_port == sessionData.src_port && it->first.dst_port == sessionData.dst_port)
         {
+            segment->direction = FROM_SRC_TO_DST;
+            return it->second;
+        }
+        if(it->first.ip_src == sessionData.ip_dst && it->first.ip_dst == sessionData.ip_src && it->first.src_port == sessionData.dst_port && it->first.dst_port == sessionData.src_port)
+        {
+            segment->direction = FROM_DST_TO_SRC;
             return it->second;
         }
     }
@@ -78,13 +83,16 @@ unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData)
     ts.last_segm_tstmp = ts.first_segm_tstmp;
     ts.src_port = sessionData.src_port;
     ts.remote_geolocation = "UNKNOWN";      // TODO
-    //db->
+    unsigned int id = db->insertTCPSession(ts);
+    activeTCPSessions.push_back(std::pair<TCPSessionMin, unsigned int>(sessionData, id));
+    segment->direction = FROM_SRC_TO_DST;
+    return id;
 }
 
 void PostgreSQLCache::bulkInsertTCPSegments()
 {
-    // find session id
-    //db->insertTCPSegments(tcpSegments);
+    db->insertTCPSegments(tcpSegments);
+    tcpSegments.clear();
 }
 
 void PostgreSQLCache::bulkInsertUDPSegments()

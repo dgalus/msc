@@ -24,13 +24,13 @@ public:
     Counters* c;
 
 private:
-    unsigned int getTCPSessionId(TCPSessionMin sessionData);
+    unsigned int getTCPSessionId(TCPSessionMin sessionData, TCPSegment* segment);
     void bulkInsertTCPSegments();
     void bulkInsertUDPSegments();
     void bulkInsertICMPSegments();
 
     PostgresqlDatabase* db;
-    std::vector<TCPSegment> tcpSegments;
+    std::vector<std::pair<unsigned int, TCPSegment>> tcpSegments;
     std::vector<ICMPSegment> icmpSegments;
     std::vector<UDPSegment> udpSegments;
     std::vector<std::string> unsafeURLs;

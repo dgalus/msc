@@ -118,7 +118,7 @@ void PostgresqlDatabase::insertTCPSegments(std::vector<std::pair<unsigned int, T
 unsigned int PostgresqlDatabase::insertTCPSession(TCPSession session)
 {
     std::string query = "insert into tcp_session (id, ip_src, src_port, ip_dst, dst_port, is_active, first_segm_tstmp, last_segm_tstmp, remote_geolocation) values (DEFAULT, "
-                        "'" + session.ip_src + ", " + std::to_string(session.src_port) + ", '" + session.ip_dst + "', " + std::to_string(session.dst_port) + ", "
+                        "'" + session.ip_src + "', " + std::to_string(session.src_port) + ", '" + session.ip_dst + "', " + std::to_string(session.dst_port) + ", "
                         + ((session.is_active) ? "TRUE" : "FALSE") + ", '" + session.first_segm_tstmp + "', '" + session.last_segm_tstmp + "', '" + session.remote_geolocation + "') returning id";
     try{
         pqxx::work W(*conn);
