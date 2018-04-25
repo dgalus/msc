@@ -19,6 +19,7 @@
 #include "arphdr.h"
 #include "structures.h"
 #include "postgresqlcache.h"
+#include "utils.h"
 
 #define BUFSIZE 65536
 
