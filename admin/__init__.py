@@ -3,10 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 import os
 import sys
+import json
 
 sys.path.append(os.path.abspath(__file__) + "/../")
 from database import *
-db = Database("sniffer", "sniffer", "127.0.0.1", 5432, "sniffer")
+config = json.load(open("config.json"))
+
+db = Database(config["database"]["user"], 
+              config["database"]["password"], 
+              config["database"]["host"], 
+              config["database"]["port"], 
+              config["database"]["db"])
 
 app = Flask(__name__)
 app.config.update(dict(
