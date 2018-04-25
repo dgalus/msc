@@ -2,14 +2,11 @@ flask
 flask-sqlalchemy
 flask-wtf
 flask-login
-scapy-python3
 requests
 geoip
-redis
 gunicorn
 bs4
 matplotlib
-rethinkdb
 schedule
 python-libnmap
 lxml

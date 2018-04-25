@@ -1,11 +1,8 @@
 import argparse
-import os
 import sys
 import schedule
-from app.banlist import initialize_unsafe_connections_list
-from app.geolocation import GeoLocation
-from app.database import RethinkDB
-from app.sniffer import Counters
+from banlist import initialize_unsafe_connections_list
+from geolocation import GeoLocation
 
 def main():
     parser = argparse.ArgumentParser()
@@ -17,19 +14,18 @@ def main():
     args = parser.parse_args()
     
     if args.clear_db:
-        RethinkDB().clear_db()
-        RethinkDB.create_all_tables()
+        pass
     if args.initialize_unsafe:
         initialize_unsafe_connections_list()
     if args.initialize_geolocation:
         GeoLocation.initialize()
     if args.daemon:
-        c = Counters()
-        schedule.every(1).minutes.do(c.store_counters())
+        #schedule.every(1).minutes.do(some_func())
 
-        while 1:
-            schedule.run_pending()
-            time.sleep(1)
+        #while 1:
+            #schedule.run_pending()
+            #time.sleep(1)
+        pass
 
 if __name__ == '__main__':
     main()
