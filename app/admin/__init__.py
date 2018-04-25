@@ -5,8 +5,7 @@ import os
 import sys
 import json
 
-sys.path.append(os.path.abspath(__file__) + "/../")
-from database import *
+from ..database import *
 config = json.load(open("config.json"))
 
 db = Database(config["database"]["user"], 
