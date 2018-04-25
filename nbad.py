@@ -4,6 +4,7 @@ import sys
 from app.banlist import initialize_unsafe_connections_list
 from app.geolocation import GeoLocation
 from app.database import Database
+from app.scheduler import Scheduler
 
 def main():
     parser = argparse.ArgumentParser()
@@ -27,12 +28,7 @@ def main():
     if args.initialize_geolocation:
         GeoLocation.initialize()
     if args.daemon:
-        #schedule.every(1).minutes.do(some_func())
-
-        #while 1:
-            #schedule.run_pending()
-            #time.sleep(1)
-        pass
+        Scheduler.run()
 
 if __name__ == '__main__':
     main()
