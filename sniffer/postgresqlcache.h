@@ -25,14 +25,20 @@ public:
     bool isURLSafe(std::string& url);
     bool isIPSafe(std::string& ip);
     Counters* c;
+    std::mutex counterMutex;
 
 private:
     unsigned int getTCPSessionId(TCPSessionMin sessionData, TCPSegment* segment);
     void bulkInsertTCPSegments();
     void bulkInsertUDPSegments();
     void bulkInsertICMPSegments();
+    void bulkInserSessionsToClose();
 
     void insertLoop();
+    std::mutex tcpSegmentsMutex;
+    std::mutex icmpSegmentsMutex;
+    std::mutex udpSegmentsMutex;
+    std::mutex sessionsToCloseMutex;
 
     PostgresqlDatabase* db;
     std::vector<std::pair<unsigned int, TCPSegment>> tcpSegments;
@@ -43,7 +49,7 @@ private:
     std::vector<std::string> unsafeIPs;
     std::vector<std::pair<TCPSessionMin, unsigned int>> activeTCPSessions;
     std::vector<std::pair<std::string, std::string>> arpTable;
-    std::vector<int> sessionsToClose;
+    std::vector<unsigned int> sessionsToClose;
 };
 
 #endif // POSTGRESQLCACHE_H

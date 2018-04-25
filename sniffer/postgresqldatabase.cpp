@@ -174,7 +174,7 @@ void PostgresqlDatabase::insertICMPSegments(std::vector<ICMPSegment> segments)
 
 void PostgresqlDatabase::insertCounters(Counters counters, std::string timestamp)
 {
-    std::string query = "insert into counter (timestamp, tcp_syn, tcp_ack, tcp_synack, tcp_psh, tcp_rst, tcp_fin, tcp, "
+    std::string query = "insert into counters (timestamp, tcp_syn, tcp_ack, tcp_synack, tcp_psh, tcp_rst, tcp_fin, tcp, "
                         "ip, arp, udp, icmp, l2_traffic, l3_traffic, l4_traffic, l2_frames, l3_frames, l4_frames) values ("
                         "'" + timestamp + "', " + std::to_string(counters.tcp_syn) + ", " + std::to_string(counters.tcp_ack) + ", "
                         "" + std::to_string(counters.tcp_synack) + ", " + std::to_string(counters.tcp_psh) + ", " + std::to_string(counters.tcp_rst) + ", "
@@ -207,16 +207,18 @@ std::vector<std::pair<TCPSessionMin, unsigned int>> PostgresqlDatabase::getActiv
 
 void PostgresqlDatabase::closeTCPSessions(std::vector<unsigned int> sessionIds)
 {
-    std::string query = "update tcp_session set is_active = false where id in (";
-    for(unsigned int i = 0; i < sessionIds.size(); i++)
-    {
-        query += std::to_string(sessionIds[i]);
-        if(i <sessionIds.size() - 1)
-            query += ", ";
-        else
-            query += ");";
+    if(sessionIds.size() > 0){
+        std::string query = "update tcp_session set is_active = false where id in (";
+        for(unsigned int i = 0; i < sessionIds.size(); i++)
+        {
+            query += std::to_string(sessionIds[i]);
+            if(i <sessionIds.size() - 1)
+                query += ", ";
+            else
+                query += ");";
+        }
+        executeQuery(query);
     }
-    executeQuery(query);
 }
 
 bool PostgresqlDatabase::executeQuery(std::string query)

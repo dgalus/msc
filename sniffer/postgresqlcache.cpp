@@ -10,7 +10,6 @@ PostgreSQLCache::PostgreSQLCache()
     arpTable = db->getARPTable();
     activeTCPSessions = db->getActiveTCPSessions();
 
-    // create thread to insert to db
     std::thread l(&PostgreSQLCache::insertLoop, this);
     l.detach();
 }
@@ -24,17 +23,23 @@ PostgreSQLCache::~PostgreSQLCache()
 void PostgreSQLCache::pushTCPSegment(TCPSessionMin session, TCPSegment segment)
 {
     unsigned int id = getTCPSessionId(session, &segment);
+    tcpSegmentsMutex.lock();
     tcpSegments.push_back(std::pair<unsigned int, TCPSegment>(id, segment));
+    tcpSegmentsMutex.unlock();
 }
 
 void PostgreSQLCache::pushICMPSegment(ICMPSegment segment)
 {
+    icmpSegmentsMutex.lock();
     icmpSegments.push_back(segment);
+    icmpSegmentsMutex.unlock();
 }
 
 void PostgreSQLCache::pushUDPSegment(UDPSegment segment)
 {
+    udpSegmentsMutex.lock();
     udpSegments.push_back(segment);
+    udpSegmentsMutex.unlock();
 }
 
 bool PostgreSQLCache::isDomainSafe(std::string &domain)
@@ -88,25 +93,55 @@ unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData, TCPSegm
     unsigned int id = db->insertTCPSession(ts);
     activeTCPSessions.push_back(std::pair<TCPSessionMin, unsigned int>(sessionData, id));
     segment->direction = FROM_SRC_TO_DST;
+    if(std::find(segment->flags.begin(), segment->flags.end(), "RST") != segment->flags.end())
+    {
+        sessionsToCloseMutex.lock();
+        sessionsToClose.push_back(id);
+        sessionsToCloseMutex.unlock();
+    }
+    if(std::find(segment->flags.begin(), segment->flags.end(), "FIN") != segment->flags.end())
+    {
+        sessionsToCloseMutex.lock();
+        sessionsToClose.push_back(id);
+        sessionsToCloseMutex.unlock();
+    }
     return id;
 }
 
 void PostgreSQLCache::bulkInsertTCPSegments()
 {
-    db->insertTCPSegments(tcpSegments);
+    tcpSegmentsMutex.lock();
+    std::vector<std::pair<unsigned int, TCPSegment>> my_tcpSegments = tcpSegments;
     tcpSegments.clear();
+    tcpSegmentsMutex.unlock();
+    db->insertTCPSegments(my_tcpSegments);
 }
 
 void PostgreSQLCache::bulkInsertUDPSegments()
 {
-    db->insertUDPSegments(udpSegments);
+    udpSegmentsMutex.lock();
+    std::vector<UDPSegment> my_udpSegments = udpSegments;
     udpSegments.clear();
+    udpSegmentsMutex.unlock();
+    db->insertUDPSegments(my_udpSegments);
 }
 
 void PostgreSQLCache::bulkInsertICMPSegments()
 {
-    db->insertICMPSegments(icmpSegments);
+    icmpSegmentsMutex.lock();
+    std::vector<ICMPSegment> my_icmpSegments = icmpSegments;
     icmpSegments.clear();
+    icmpSegmentsMutex.unlock();
+    db->insertICMPSegments(my_icmpSegments);
+}
+
+void PostgreSQLCache::bulkInserSessionsToClose()
+{
+    sessionsToCloseMutex.lock();
+    std::vector<unsigned int> my_sessionsToClose = sessionsToClose;
+    sessionsToClose.clear();
+    sessionsToCloseMutex.unlock();
+    db->closeTCPSessions(my_sessionsToClose);
 }
 
 void PostgreSQLCache::insertLoop()
@@ -116,7 +151,14 @@ void PostgreSQLCache::insertLoop()
         while(true)
         {
             sleep(10);
-            std::cerr << "10s ";
+            bulkInsertICMPSegments();
+            bulkInsertUDPSegments();
+            bulkInsertTCPSegments();
+            bulkInserSessionsToClose();
+            counterMutex.lock();
+            db->insertCounters(*c, getCurrentDateTime());
+            c->zeroize();
+            counterMutex.unlock();
         }
     }
     catch(const std::exception& e)
