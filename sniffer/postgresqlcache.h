@@ -1,7 +1,10 @@
 #ifndef POSTGRESQLCACHE_H
 #define POSTGRESQLCACHE_H
 
+#include <unistd.h>
+
 #include <algorithm>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
@@ -28,6 +31,8 @@ private:
     void bulkInsertTCPSegments();
     void bulkInsertUDPSegments();
     void bulkInsertICMPSegments();
+
+    void insertLoop();
 
     PostgresqlDatabase* db;
     std::vector<std::pair<unsigned int, TCPSegment>> tcpSegments;

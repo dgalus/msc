@@ -11,6 +11,8 @@ PostgreSQLCache::PostgreSQLCache()
     activeTCPSessions = db->getActiveTCPSessions();
 
     // create thread to insert to db
+    std::thread l(&PostgreSQLCache::insertLoop, this);
+    l.detach();
 }
 
 PostgreSQLCache::~PostgreSQLCache()
@@ -105,4 +107,21 @@ void PostgreSQLCache::bulkInsertICMPSegments()
 {
     db->insertICMPSegments(icmpSegments);
     icmpSegments.clear();
+}
+
+void PostgreSQLCache::insertLoop()
+{
+    std::cerr << "Thread " << std::this_thread::get_id() << " started!" << std::endl;
+    try{
+        while(true)
+        {
+            sleep(10);
+            std::cerr << "10s ";
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Thread " << std::this_thread::get_id() << " throwed an exception - " << e.what() << std::endl;
+    }
+    std::cerr << "Thread " << std::this_thread::get_id() << " stopped!" << std::endl;
 }
