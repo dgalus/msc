@@ -14,11 +14,11 @@ class Database:
         self.host = host
         self.port = port
         self.database = database
-        db_string = "postgres://" + user + ":" + password + "@" + host + ":" + str(port) + "/" + database
-        db = create_engine(db_string)  
-        Session = sessionmaker(db)  
+        db_string = "postgres://{}:{}@{}:{}/{}".format(user, password, host, port, database)
+        engine = create_engine(db_string)  
+        Session = sessionmaker(bind=engine)  
         self.session = Session()
-        base.metadata.create_all(db)
+        base.metadata.create_all(engine)
         
     def clear_db(self):
         self.session.query(Counter).delete()

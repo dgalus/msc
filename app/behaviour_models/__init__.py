@@ -1,2 +1,2 @@
 from .computer_behaviour_model import ComputerBehaviourModel
-from .network_behaviout_model import NetworkBehaviourModel
+from .network_behaviour_model import NetworkBehaviourModel

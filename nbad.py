@@ -1,8 +1,9 @@
 import argparse
+import json
 import sys
-import schedule
-from banlist import initialize_unsafe_connections_list
-from geolocation import GeoLocation
+from app.banlist import initialize_unsafe_connections_list
+from app.geolocation import GeoLocation
+from app.database import Database
 
 def main():
     parser = argparse.ArgumentParser()
@@ -14,7 +15,13 @@ def main():
     args = parser.parse_args()
     
     if args.clear_db:
-        pass
+        config = json.load(open("config.json"))
+        db = Database(config["database"]["user"], 
+                      config["database"]["password"], 
+                      config["database"]["host"], 
+                      config["database"]["port"], 
+                      config["database"]["db"]) 
+        db.clear_db()
     if args.initialize_unsafe:
         initialize_unsafe_connections_list()
     if args.initialize_geolocation:

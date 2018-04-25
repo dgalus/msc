@@ -4,10 +4,9 @@ from .openphish import openphish_get_unsafe_urls
 import sys
 import os
 import json
+from ..database import Database, UnsafeDomain, UnsafeIP, UnsafeURL
 
 def initialize_unsafe_connections_list():
-    sys.path.append(os.path.abspath(__file__) + "/../")
-    from database import Database, UnsafeIP, UnsafeURL, UnsafeDomain
     config = json.load(open("config.json"))
     
     db = Database(config["database"]["user"], 
