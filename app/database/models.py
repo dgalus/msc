@@ -169,9 +169,11 @@ class ProposedIptablesRules(base):
     timestamp = Column(DateTime, nullable=False)
     rank = Column(Integer, nullable=False)
 
-    def __init__(self, rule, description, timestamp, rank):
+    def __init__(self, rule, description, notification_sent, admin_delete, timestamp, rank):
         self.rule = rule
         self.description = description
+        self.notification_sent = notification_sent
+        self.admin_delete = admin_delete
         self.timestamp = timestamp
         self.rank = rank
 
@@ -185,8 +187,10 @@ class Alert(base):
     admin_delete = Column(Boolean, nullable=False)
     timestamp = Column(DateTime, nullable=False)
 
-    def __init__(self, description, alert_type, rank, timestamp):
+    def __init__(self, description, alert_type, rank, notification_sent, admin_delete, timestamp):
         self.description = description
         self.alert_type = alert_type
+        self.notification_sent = notification_sent
+        self.admin_delete = admin_delete        
         self.rank = rank
         self.timestamp = timestamp
