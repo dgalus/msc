@@ -12,3 +12,4 @@ python-libnmap
 lxml
 psycopg2-binary
 sqlalchemy
+statistics
