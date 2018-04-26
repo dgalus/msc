@@ -1,9 +1,10 @@
 import smtplib
+import json
 from email.message import EmailMessage
 from email.utils import make_msgid
 
 def send_email(txt, txt_html, subject):
-    with open("../config.json", "r") as f:
+    with open("config.json", "r") as f:
         config = json.loads(f.read())["notifications"]["mail"]
         msg = EmailMessage()
         msg['Subject'] = subject

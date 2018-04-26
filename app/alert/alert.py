@@ -8,6 +8,9 @@ Alert = namedtuple("Alert", "alert_type description")
 class AlertType(Enum):
     ARP_SPOOFING = 1
     NEW_HOST_DETECTED = 2
+    
+    def __str__(self):
+        return self.name
 
 
 class ARPSpoofingAlert:
