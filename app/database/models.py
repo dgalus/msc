@@ -194,3 +194,18 @@ class Alert(base):
         self.admin_delete = admin_delete        
         self.rank = rank
         self.timestamp = timestamp
+
+
+class FakeCounter(base):
+    __tablename__ = 'fake_counters'
+    id = Column(Integer, primary_key=True, nullable=False)
+    timestamp = Column(DateTime, nullable=False)
+    tcp_syn = Column(Integer, nullable=False)
+    tcp_rst = Column(Integer, nullable=False)
+    udp = Column(Integer, nullable=False)
+
+    def __init__(self, tcp_syn, tcp_rst, udp):
+        self.timestamp = datetime.datetime.now()
+        self.tcp_syn = tcp_syn
+        self.tcp_rst = tcp_rst
+        self.udp = udp
