@@ -8,6 +8,8 @@ Alert = namedtuple("Alert", "alert_type description")
 class AlertType(Enum):
     ARP_SPOOFING = 1
     NEW_HOST_DETECTED = 2
+    SYN_FLOOD = 3
+    TCP_SYN_SCAN = 4
     
     def __str__(self):
         return self.name
@@ -29,16 +31,3 @@ class NewHostDetectedAlert:
         
     def to_string(self):
         return "New host detected: " + ip_addr + "."
-
-
-
-class Alerts:
-    def __init__(self):
-        self.alerts = []
-    
-    def push(self, alert):
-        if isinstance(alert, Alert):
-            self.alerts.append(alert)
-        
-    def store(self):
-        pass

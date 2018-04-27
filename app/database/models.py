@@ -201,11 +201,15 @@ class FakeCounter(base):
     id = Column(Integer, primary_key=True, nullable=False)
     timestamp = Column(DateTime, nullable=False)
     tcp_syn = Column(Integer, nullable=False)
+    tcp_syn_avg = Column(Integer, nullable=False)
     tcp_rst = Column(Integer, nullable=False)
+    tcp_rst_avg = Column(Integer, nullable=False)
     udp = Column(Integer, nullable=False)
 
-    def __init__(self, tcp_syn, tcp_rst, udp):
+    def __init__(self, tcp_syn, tcp_syn_avg, tcp_rst, tcp_rst, avg, udp):
         self.timestamp = datetime.datetime.now()
         self.tcp_syn = tcp_syn
+        self.tcp_syn_avg = tcp_syn_avg
         self.tcp_rst = tcp_rst
+        self.tcp_rst_avg = tcp_syn_avg
         self.udp = udp
