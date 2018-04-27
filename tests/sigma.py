@@ -3,6 +3,7 @@ from sklearn.cluster import KMeans
 from sklearn import datasets
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 TCP_SYN_FILE = 'tcp_syn_trunc.dat'
 
@@ -150,8 +151,24 @@ def holt_short():
 	plt.savefig('hw_short.svg', format="svg")
 	plt.clf()
 
-holt_short()
-holt_long()
+def sigmoid(a, b, x):
+	return 1./(1+math.exp(-1.*a*(x-b)))
+	
+def draw_sigmoid():
+	a = 0.2
+	b = 1
+	res = []
+	for i in range(-10, 11):
+		res.append(sigmoid(a, b, i))
+	plt.plot(range(-10,11), res, marker='o')
+	plt.show()
+	
+print(sigmoid(0.5, 1, 5000))
+
+draw_sigmoid()
+
+#holt_short()
+#holt_long()
 
 #sigma()
 #histogram()
