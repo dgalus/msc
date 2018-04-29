@@ -22,6 +22,7 @@ public:
     void pushTCPSegment(TCPSessionMin session, TCPSegment segment);
     void pushICMPSegment(ICMPSegment segment);
     void pushUDPSegment(UDPSegment segment);
+    void pushHTTP(std::string httpContent);
     bool isDomainSafe(std::string& domain);
     bool isURLSafe(std::string& url);
     bool isIPSafe(std::string& ip);
@@ -35,16 +36,19 @@ private:
     void bulkInsertICMPSegments();
     void bulkInserSessionsToClose();
 
+    void httpLoop();
     void insertLoop();
     std::mutex tcpSegmentsMutex;
     std::mutex icmpSegmentsMutex;
     std::mutex udpSegmentsMutex;
+    std::mutex httpContentsMutex;
     std::mutex sessionsToCloseMutex;
 
     PostgresqlDatabase* db;
     std::vector<std::pair<unsigned int, TCPSegment>> tcpSegments;
     std::vector<ICMPSegment> icmpSegments;
     std::vector<UDPSegment> udpSegments;
+    std::vector<std::string> httpContents;
     std::vector<std::string> unsafeURLs;
     std::vector<std::string> unsafeDomains;
     std::vector<std::string> unsafeIPs;

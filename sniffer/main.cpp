@@ -175,6 +175,8 @@ void processFrame(unsigned char *buffer, int buflen)
             pc->counterMutex.unlock();
             tcp_seg.flags = flags;
             pc->pushTCPSegment(tcp_sess_min, tcp_seg);
+            
+            // check for HTTP
         }
         else if(iph->protocol == 17)
         {

@@ -11,7 +11,9 @@ PostgreSQLCache::PostgreSQLCache()
     activeTCPSessions = db->getActiveTCPSessions();
 
     std::thread l(&PostgreSQLCache::insertLoop, this);
+    std::thread hl(&PostgreSQLCache::httpLoop, this);
     l.detach();
+    hl.detach();
 }
 
 PostgreSQLCache::~PostgreSQLCache()
@@ -40,6 +42,13 @@ void PostgreSQLCache::pushUDPSegment(UDPSegment segment)
     udpSegmentsMutex.lock();
     udpSegments.push_back(segment);
     udpSegmentsMutex.unlock();
+}
+
+void PostgreSQLCache::pushHTTP(std::string httpContent)
+{
+    httpContentsMutex.lock();
+    httpContents.push_back(httpContent);
+    httpContentsMutex.unlock();
 }
 
 bool PostgreSQLCache::isDomainSafe(std::string &domain)
@@ -183,6 +192,25 @@ void PostgreSQLCache::insertLoop()
             db->insertCounters(*c, getCurrentDateTime());
             c->zeroize();
             counterMutex.unlock();
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Thread " << std::this_thread::get_id() << " throwed an exception - " << e.what() << std::endl;
+    }
+    std::cerr << "Thread " << std::this_thread::get_id() << " stopped!" << std::endl;
+}
+
+void PostgreSQLCache::httpLoop()
+{
+    std::cerr << "Thread " << std::this_thread::get_id() << " started!" << std::endl;
+    try{
+        while(true)
+        {
+            sleep(20);
+            httpContentsMutex.lock();
+            
+            httpContentsMutex.unlock();
         }
     }
     catch(const std::exception& e)
