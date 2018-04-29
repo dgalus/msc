@@ -10,6 +10,8 @@ class AlertType(Enum):
     NEW_HOST_DETECTED = 2
     SYN_FLOOD = 3
     TCP_SYN_SCAN = 4
+    TCP_FIN_SCAN = 5
+    HIGH_TRAFFIC_AMOUNT = 6
     
     def __str__(self):
         return self.name
@@ -47,3 +49,15 @@ class TcpSynScanAlert:
         
     def __str__(self):
         return "Host " + self.scanner_ip + " is scanning ports using TCP SYN scan method."
+    
+class TcpFinScanAlert:
+    def __init__(self, scanner_ip):
+        self.scanner_ip = scanner_ip
+        
+    def __str__(self):
+        return "Host " + self.scanner_ip + " is scanning ports using TCP FIN scan method."
+    
+class HighTrafficAmountAlert:
+    def __str__(self):
+        return "Traffic is higher than usual."
+        

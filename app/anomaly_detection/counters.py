@@ -1,5 +1,5 @@
 from ..database import *
-from ..alert import  generate_alert, AlertType
+from ..alert import  generate_alert, AlertType, HighTrafficAmountAlert, TcpSynScanAlert, SynFloodAlert
 import statistics
 
 def is_outlier(traffic, test_value):
@@ -23,8 +23,14 @@ def analyze_counters():
         lc_l2traffic.append(lc.l2_traffic)
     if len(last_counters) > 0:
         if len(last_counters) > 100:
-                # bigger traffic (last_counters) l2traffic
-                
+                # high traffic amount
+                if is_outlier(lc_l2traffic[:-1], lc_l2traffic[-1]):
+                    ht = HighTrafficAmountAlert()
+                    if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
+                        rank = 60
+                    else:
+                        rank = 20
+                    generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
                 # higher tcp_syn (fake_counters)
                 
                 # higher tcp_rst (fake_counters)
