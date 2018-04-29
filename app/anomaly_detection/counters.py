@@ -1,6 +1,9 @@
 from ..database import *
-from ..alert import  generate_alert, AlertType, HighTrafficAmountAlert, TcpSynScanAlert, SynFloodAlert
+from ..alert import  generate_alert, AlertType, HighTrafficAmountAlert, TcpSynScanAlert, SynFloodAlert, TcpFinScanAlert
+from sqlalchemy import func
 import statistics
+import datetime
+import json
 
 def is_outlier(traffic, test_value):
     traffic_without_duplicates = list(set(traffic))
@@ -11,6 +14,12 @@ def is_outlier(traffic, test_value):
     return False
 
 def analyze_counters():
+    config = json.load(open("config.json"))
+    db = Database(config["database"]["user"], 
+                  config["database"]["password"], 
+                  config["database"]["host"], 
+                  config["database"]["port"], 
+                  config["database"]["db"])    
     last_counters = db.session.query(Counter).order_by(Counter.id.desc()).limit(1000)
     last_fake_counters = db.session.query(FakeCounter).order_by(FakeCounter.id.desc()).limit(1000)
     lfc_syn = []
@@ -25,28 +34,43 @@ def analyze_counters():
         if len(last_counters) > 100:
             # high traffic amount
             if is_outlier(lc_l2traffic[:-1], lc_l2traffic[-1]):
+                # TODO: check long-term forecast
+            
+                # TODO: check short-term forecast
+                
                 ht = HighTrafficAmountAlert()
                 if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
                     rank = 60
                 else:
                     rank = 20
                 generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
+            
             # higher tcp_syn (fake_counters)
             if is_outlier(lfc_syn, last_counters[-1].tcp_syn):
                 new_tcp_syn = last_fake_counters[-1].tcp_syn_avg
                 avg_syn = last_fake_counters[-1].tcp_syn_avg
-                #generate alert (decide if syn-flood or syn scan)
+                # TODO: generate alert (decide if syn-flood or syn scan)
+                
             else:
                 new_tcp_syn = last_counters[-1].tcp_syn
                 lfc_syn.append(last_counters[-1].tcp_syn)
                 avg_syn = mean(lfc_syn)
+                
             # higher tcp_rst (fake_counters)
-            pass
-        
+            if is_outlier(lfc_rst, last_counters[-1].tcp_rst):
+                new_tcp_rst = last_fake_counters[-1].tcp_rst_avg
+                avg_rst = last_fake_counters[-1].tcp_rst_avg
+                current_time = datetime.datetime.now()
+                two_min_ago = current_time - datetime.timedelta(minutes=2)
+                scanner_ip = db.session.query(TCPSession.ip_src).filter(TCPSession.last_segm_tstmp > two_min_ago).group_by(TCPSession.ip_src).order_by(func.count(TCPSession.ip_src).desc()).first()[0]
+                generate_alert(AlertType.TCP_FIN_SCAN, TcpFinScanAlert(scanner_ip), 60)
+            else:
+                new_tcp_rst = last_counters[-1].tcp_rst
+                lfc_rst.append(last_counters[-1].tcp_rst)
+                avg_rst = mean(lfc_rst)
             fc = FakeCounter(new_tcp_syn, avg_syn, new_tcp_rst, avg_rst, last_counters[-1].udp)
             db.session.add(fc)
             db.session.commit(fc)
-            #generate_alert
         else:
             new_tcp_syn = last_counters[-1].tcp_syn
             new_tcp_rst = last_counters[-1].tcp_rst
