@@ -1,7 +1,47 @@
 from ..database import *
 from ..alert import  generate_alert, AlertType
+import statistics
+
+def is_outlier(traffic, test_value):
+    traffic_without_duplicates = list(set(traffic))
+    stddev = stdev(traffic_without_duplicates)
+    avg = mean(traffic_without_duplicates)
+    if test_value > (4*stddev)+avg:
+        return True
+    return False
 
 def analyze_counters():
-    c = db.session.query(Counter).order_by(Counter.id.desc()).first()
-    if c:
-        pass
+    last_counters = db.session.query(Counter).order_by(Counter.id.desc()).limit(1000)
+    last_fake_counters = db.session.query(FakeCounter).order_by(FakeCounter.id.desc()).limit(1000)
+    lfc_syn = []
+    lfc_rst = []
+    lc_l2traffic = []
+    for l in last_fake_counters:
+        lfc_syn.append(l.tcp_syn)
+        lfc_rst.append(l.tcp_rst)
+    for lc in last_counters:
+        lc_l2traffic.append(lc.l2_traffic)
+    if len(last_counters) > 0:
+        if len(last_counters) > 100:
+                # bigger traffic (last_counters) l2traffic
+                
+                # higher tcp_syn (fake_counters)
+                
+                # higher tcp_rst (fake_counters)
+                pass
+            #generate_alert
+        else:
+            new_tcp_syn = last_counters[-1].tcp_syn
+            new_tcp_rst = last_counters[-1].tcp_rst
+            s_syn = 0
+            s_rst = 0
+            for i in range(0, len(lfc_syn)):
+                s_syn += lfc_syn[i]
+                s_rst += lfc_rst[i]
+            s_syn += new_tcp_syn
+            s_rst += new_tcp_rst
+            avg_syn = s_syn/(len(lfc_syn) + 1)
+            avg_rst = s_rst/(len(lfc_rst) + 1)
+            fc = FakeCounter(new_tcp_syn, avg_syn, new_tcp_rst, avg_rst, avg, last_counters[-1].udp)
+            db.session.add(fc)
+            db.session.commit(fc)

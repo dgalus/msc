@@ -1,2 +1,2 @@
 from .forecasting import *
-from .counters import *
+from .counters import analyze_counters

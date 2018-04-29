@@ -21,7 +21,7 @@ class ARPSpoofingAlert:
         self.arp_mac = arp_mac
         self.db_mac = db_mac
     
-    def to_string(self):
+    def __str__(self):
         return ip.addr + " is known under " + db_mac + " but " + arp_mac + " found in reply. Check for ARP spoofing."
 
 
@@ -29,5 +29,21 @@ class NewHostDetectedAlert:
     def __init__(self, ip_addr):
         self.ip_addr = ip_addr
         
-    def to_string(self):
+    def __str__(self):
         return "New host detected: " + ip_addr + "."
+    
+    
+class SynFloodAlert:
+    def __init__(self, victim_ip, attacker_ip):
+        self.victim_ip = victim_ip
+        self.attacker_ip = attacker_ip
+        
+    def __str__(self):
+        return "Host " + self.victim_ip + " is possibly SYN-flooded by " + self.attacker_ip + "."
+    
+class TcpSynScanAlert:
+    def __init__(self, scanner_ip):
+        self.scanner_ip = scanner_ip
+        
+    def __str__(self):
+        return "Host " + self.scanner_ip + " is scanning ports using TCP SYN scan method."

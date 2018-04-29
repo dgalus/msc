@@ -206,10 +206,10 @@ class FakeCounter(base):
     tcp_rst_avg = Column(Integer, nullable=False)
     udp = Column(Integer, nullable=False)
 
-    def __init__(self, tcp_syn, tcp_syn_avg, tcp_rst, tcp_rst, avg, udp):
+    def __init__(self, tcp_syn, tcp_syn_avg, tcp_rst, tcp_rst_avg, udp):
         self.timestamp = datetime.datetime.now()
         self.tcp_syn = tcp_syn
         self.tcp_syn_avg = tcp_syn_avg
         self.tcp_rst = tcp_rst
-        self.tcp_rst_avg = tcp_syn_avg
+        self.tcp_rst_avg = tcp_rst_avg
         self.udp = udp
