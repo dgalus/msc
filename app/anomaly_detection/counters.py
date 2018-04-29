@@ -13,6 +13,14 @@ def is_outlier(traffic, test_value):
         return True
     return False
 
+def is_outlier_by_last(traffic, test_value):
+    traffic_without_duplicates = list(set(traffic))
+    stddev = stdev(traffic_without_duplicates)
+    last = traffic[-1]
+    if test_value > (4*stddev)+last:
+        return True
+    return False
+
 def analyze_counters():
     config = json.load(open("config.json"))
     db = Database(config["database"]["user"], 
@@ -36,14 +44,14 @@ def analyze_counters():
             if is_outlier(lc_l2traffic[:-1], lc_l2traffic[-1]):
                 # TODO: check long-term forecast
             
-                # TODO: check short-term forecast
-                
-                ht = HighTrafficAmountAlert()
-                if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
-                    rank = 60
-                else:
-                    rank = 20
-                generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
+                # check short-term forecast
+                if is_outlier_by_last(lc_l2traffic[:-1], lc_l2traffic[-1]):
+                    ht = HighTrafficAmountAlert()
+                    if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
+                        rank = 60
+                    else:
+                        rank = 20
+                    generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
             
             # higher tcp_syn (fake_counters)
             if is_outlier(lfc_syn, last_counters[-1].tcp_syn):

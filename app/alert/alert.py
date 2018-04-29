@@ -12,6 +12,7 @@ class AlertType(Enum):
     TCP_SYN_SCAN = 4
     TCP_FIN_SCAN = 5
     HIGH_TRAFFIC_AMOUNT = 6
+    UNSAFE_IP_DETECTED = 7
     
     def __str__(self):
         return self.name
@@ -61,3 +62,9 @@ class HighTrafficAmountAlert:
     def __str__(self):
         return "Traffic is higher than usual."
         
+class UnsafeIPDetectedAlert:
+    def __init__(self, ip):
+        self.ip = ip
+        
+    def __str__(self):
+        return "Blacklisted IP (" + ip + ")  transmission detected."

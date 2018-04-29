@@ -1,6 +1,7 @@
 import json
 import ipaddress
 from ..database import Database, TCPSession
+from ..utils import hosts_in_the_same_netowrk, is_local_address
 from .geolocation import GeoLocation
 
 def fix_unknown_geolocations():
@@ -20,12 +21,3 @@ def fix_unknown_geolocations():
             else:
                 session.remote_geolocation = GeoLocation.get_country_by_address(session.ip_src)
     db.session.commit()
-
-def is_local_address(ip):
-    return ipaddress.IPv4Address(ip).is_private
-
-def hosts_in_the_same_netowrk(network_list, ip1, ip2):
-    for network in network_list:
-        if ipaddress.IPv4Address(ip1) in ipaddress.IPv4Network(network) and ipaddress.IPv4Address(ip2) in ipaddress.IPv4Network(network):
-            return True
-    return False
