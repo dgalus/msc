@@ -23,18 +23,29 @@ def analyze_counters():
         lc_l2traffic.append(lc.l2_traffic)
     if len(last_counters) > 0:
         if len(last_counters) > 100:
-                # high traffic amount
-                if is_outlier(lc_l2traffic[:-1], lc_l2traffic[-1]):
-                    ht = HighTrafficAmountAlert()
-                    if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
-                        rank = 60
-                    else:
-                        rank = 20
-                    generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
-                # higher tcp_syn (fake_counters)
-                
-                # higher tcp_rst (fake_counters)
-                pass
+            # high traffic amount
+            if is_outlier(lc_l2traffic[:-1], lc_l2traffic[-1]):
+                ht = HighTrafficAmountAlert()
+                if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
+                    rank = 60
+                else:
+                    rank = 20
+                generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
+            # higher tcp_syn (fake_counters)
+            if is_outlier(lfc_syn, last_counters[-1].tcp_syn):
+                new_tcp_syn = last_fake_counters[-1].tcp_syn_avg
+                avg_syn = last_fake_counters[-1].tcp_syn_avg
+                #generate alert (decide if syn-flood or syn scan)
+            else:
+                new_tcp_syn = last_counters[-1].tcp_syn
+                lfc_syn.append(last_counters[-1].tcp_syn)
+                avg_syn = mean(lfc_syn)
+            # higher tcp_rst (fake_counters)
+            pass
+        
+            fc = FakeCounter(new_tcp_syn, avg_syn, new_tcp_rst, avg_rst, last_counters[-1].udp)
+            db.session.add(fc)
+            db.session.commit(fc)
             #generate_alert
         else:
             new_tcp_syn = last_counters[-1].tcp_syn
@@ -48,6 +59,6 @@ def analyze_counters():
             s_rst += new_tcp_rst
             avg_syn = s_syn/(len(lfc_syn) + 1)
             avg_rst = s_rst/(len(lfc_rst) + 1)
-            fc = FakeCounter(new_tcp_syn, avg_syn, new_tcp_rst, avg_rst, avg, last_counters[-1].udp)
+            fc = FakeCounter(new_tcp_syn, avg_syn, new_tcp_rst, avg_rst, last_counters[-1].udp)
             db.session.add(fc)
             db.session.commit(fc)
