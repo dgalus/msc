@@ -41,7 +41,7 @@ void processFrame(unsigned char *buffer, int buflen)
     pc->c->l2_traffic += buflen;
     pc->counterMutex.unlock();
 
-    if(eth->h_proto == 0x0608) // ARP
+    if(eth->h_proto == 0x0608)
     {
         pc->counterMutex.lock();
         pc->c->l3_traffic += (buflen - sizeof(struct ethhdr));
@@ -51,42 +51,14 @@ void processFrame(unsigned char *buffer, int buflen)
         struct arphdr_t *arph = (struct arphdr_t *)(buffer + sizeof(struct ethhdr));
         if(ntohs(arph->htype) == 1 && ntohs(arph->ptype) == 0x0800)
         {
-            char sender_mac[18];
-            char target_mac[18];
-            char sender_ip[16];
-            char target_ip[16];
-            snprintf(sender_mac, 18, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", arph->sha[0], arph->sha[1], arph->sha[2], arph->sha[3], arph->sha[4], arph->sha[5]);
-            snprintf(target_mac, 18, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", arph->tha[0], arph->tha[1], arph->tha[2], arph->tha[3], arph->tha[4], arph->tha[5]);
-            snprintf(sender_ip, 16, "%d.%d.%d.%d", arph->spa[0], arph->spa[1], arph->spa[2], arph->spa[3]);
-            snprintf(target_ip, 16, "%d.%d.%d.%d", arph->tpa[0], arph->tpa[1], arph->tpa[2], arph->tpa[3]);
-
-            /*rapidjson::Value sender_hw_val;
-            sender_hw_val.SetString(std::string(sender_mac).c_str(), std::string(sender_mac).length(), allocator);
-            arp.AddMember("sender_hw", sender_hw_val, allocator);
-
-            rapidjson::Value target_hw_val;
-            target_hw_val.SetString(std::string(target_mac).c_str(), std::string(target_mac).length(), allocator);
-            arp.AddMember("target_hw", target_hw_val, allocator);
-
-            rapidjson::Value sender_ip_val;
-            sender_ip_val.SetString(std::string(sender_ip).c_str(), std::string(sender_ip).length(), allocator);
-            arp.AddMember("sender_ip", sender_ip_val, allocator);
-
-            rapidjson::Value target_ip_val;
-            target_ip_val.SetString(std::string(target_ip).c_str(), std::string(target_ip).length(), allocator);
-            arp.AddMember("target_ip", target_ip_val, allocator);
-
-            rapidjson::Value hw_type_val;
-            hw_type_val.SetInt(ntohs(arph->htype));
-            arp.AddMember("hw_type", hw_type_val, allocator);
-
-            rapidjson::Value proto_type_val;
-            proto_type_val.SetInt(ntohs(arph->ptype));
-            arp.AddMember("proto_type", proto_type_val, allocator);
-
-            rapidjson::Value operation_val;
-            operation_val.SetInt(ntohs(arph->oper));
-            arp.AddMember("operation", operation_val, allocator);*/
+            if(arph->oper == 2)
+            {
+                char sender_mac[18];
+                char sender_ip[16];
+                snprintf(sender_mac, 18, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", arph->sha[0], arph->sha[1], arph->sha[2], arph->sha[3], arph->sha[4], arph->sha[5]);
+                snprintf(sender_ip, 16, "%d.%d.%d.%d", arph->spa[0], arph->spa[1], arph->spa[2], arph->spa[3]);
+                // TODO: check for ARP spoofing
+            }
         }
     }
     else if(eth->h_proto == 0x0008)
