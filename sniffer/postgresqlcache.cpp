@@ -8,12 +8,16 @@ PostgreSQLCache::PostgreSQLCache()
     unsafeIPs = db->getUnsafeIPs();
     unsafeURLs = db->getUnsafeURLs();
     arpTable = db->getARPTable();
+    activeTCPSessionsMutex.lock();
     activeTCPSessions = db->getActiveTCPSessions();
+    activeTCPSessionsMutex.unlock();
 
     std::thread l(&PostgreSQLCache::insertLoop, this);
     std::thread hl(&PostgreSQLCache::httpLoop, this);
+    std::thread acl(&PostgreSQLCache::activeTCPSessionsLoop, this);
     l.detach();
     hl.detach();
+    acl.detach();
 }
 
 PostgreSQLCache::~PostgreSQLCache()
@@ -77,6 +81,7 @@ bool PostgreSQLCache::isIPSafe(std::string &ip)
 
 unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData, TCPSegment* segment)
 {
+    activeTCPSessionsMutex.lock();
     for(auto it = activeTCPSessions.begin(); it != activeTCPSessions.end(); it++)
     {
         if(it->first.ip_src == sessionData.ip_src && it->first.ip_dst == sessionData.ip_dst && it->first.src_port == sessionData.src_port && it->first.dst_port == sessionData.dst_port)
@@ -90,6 +95,7 @@ unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData, TCPSegm
             return it->second;
         }
     }
+    activeTCPSessionsMutex.unlock();
     TCPSession ts;
     ts.dst_port = sessionData.dst_port;
     ts.first_segm_tstmp = getCurrentDateTime();
@@ -98,28 +104,33 @@ unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData, TCPSegm
     ts.is_active = true;
     ts.last_segm_tstmp = ts.first_segm_tstmp;
     ts.src_port = sessionData.src_port;
-    ts.remote_geolocation = "UNKNOWN";      // TODO
+    ts.remote_geolocation = "UNKNOWN";
     unsigned int id = db->insertTCPSession(ts);
+    activeTCPSessionsMutex.lock();
     activeTCPSessions.push_back(std::pair<TCPSessionMin, unsigned int>(sessionData, id));
+    activeTCPSessionsMutex.unlock();
     segment->direction = FROM_SRC_TO_DST;
     if(std::find(segment->flags.begin(), segment->flags.end(), "RST") != segment->flags.end())
     {
         sessionsToCloseMutex.lock();
         sessionsToClose.push_back(id);
         sessionsToCloseMutex.unlock();
+        activeTCPSessionsMutex.lock();
         for(int i = 0; i < activeTCPSessions.size(); i++)
             if(activeTCPSessions.at(i).second == id)
                 activeTCPSessions.erase(activeTCPSessions.begin()+i);
-
+        activeTCPSessionsMutex.unlock();
     }
     if(std::find(segment->flags.begin(), segment->flags.end(), "FIN") != segment->flags.end())
     {
         sessionsToCloseMutex.lock();
         sessionsToClose.push_back(id);
         sessionsToCloseMutex.unlock();
+        activeTCPSessionsMutex.lock();
         for(int i = 0; i < activeTCPSessions.size(); i++)
             if(activeTCPSessions.at(i).second == id)
                 activeTCPSessions.erase(activeTCPSessions.begin()+i);
+        activeTCPSessionsMutex.unlock();
     }
     return id;
 }
@@ -179,7 +190,7 @@ void PostgreSQLCache::bulkInserSessionsToClose()
 
 void PostgreSQLCache::insertLoop()
 {
-    std::cerr << "Thread " << std::this_thread::get_id() << " started!" << std::endl;
+    std::cerr << "insertLoop() " << std::this_thread::get_id() << " started!" << std::endl;
     try{
         while(true)
         {
@@ -196,14 +207,14 @@ void PostgreSQLCache::insertLoop()
     }
     catch(const std::exception& e)
     {
-        std::cerr << "Thread " << std::this_thread::get_id() << " throwed an exception - " << e.what() << std::endl;
+        std::cerr << "insertLoop() thread " << std::this_thread::get_id() << " throwed an exception - " << e.what() << std::endl;
     }
-    std::cerr << "Thread " << std::this_thread::get_id() << " stopped!" << std::endl;
+    std::cerr << "insertLoop() thread " << std::this_thread::get_id() << " stopped!" << std::endl;
 }
 
 void PostgreSQLCache::httpLoop()
 {
-    std::cerr << "Thread " << std::this_thread::get_id() << " started!" << std::endl;
+    std::cerr << "httpLoop() thread " << std::this_thread::get_id() << " started!" << std::endl;
     try{
         while(true)
         {
@@ -215,7 +226,27 @@ void PostgreSQLCache::httpLoop()
     }
     catch(const std::exception& e)
     {
-        std::cerr << "Thread " << std::this_thread::get_id() << " throwed an exception - " << e.what() << std::endl;
+        std::cerr << "httpLoop() thread " << std::this_thread::get_id() << " throwed an exception - " << e.what() << std::endl;
     }
-    std::cerr << "Thread " << std::this_thread::get_id() << " stopped!" << std::endl;
+    std::cerr << "httpLoop() thread " << std::this_thread::get_id() << " stopped!" << std::endl;
+}
+
+void PostgreSQLCache::activeTCPSessionsLoop()
+{
+    std::cerr << "activeTCPSessionsLoop() thread " << std::this_thread::get_id() << " started!" << std::endl;
+    try{
+        while(true)
+        {
+            sleep(60);
+            activeTCPSessionsMutex.lock();
+            activeTCPSessions.clear();
+            activeTCPSessions = db->getActiveTCPSessions();
+            activeTCPSessionsMutex.unlock();
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "activeTCPSessionsLoop() thread " << std::this_thread::get_id() << " throwed an exception - " << e.what() << std::endl;
+    }
+    std::cerr << "activeTCPSessionsLoop() thread " << std::this_thread::get_id() << " stopped!" << std::endl;
 }

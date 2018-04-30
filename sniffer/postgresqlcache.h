@@ -38,11 +38,13 @@ private:
 
     void httpLoop();
     void insertLoop();
+    void activeTCPSessionsLoop();
     std::mutex tcpSegmentsMutex;
     std::mutex icmpSegmentsMutex;
     std::mutex udpSegmentsMutex;
     std::mutex httpContentsMutex;
     std::mutex sessionsToCloseMutex;
+    std::mutex activeTCPSessionsMutex;
 
     PostgresqlDatabase* db;
     std::vector<std::pair<unsigned int, TCPSegment>> tcpSegments;
