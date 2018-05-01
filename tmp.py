@@ -9,7 +9,7 @@
 
 #print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
 
-from app.database import Database, TCPSession
+from app.database import Database, Computer
 from sqlalchemy import func
 import datetime
 import json
@@ -21,7 +21,6 @@ db = Database(config["database"]["user"],
               config["database"]["port"], 
               config["database"]["db"])
 
-current_time = datetime.datetime.now()
-two_min_ago = current_time - datetime.timedelta(weeks=2)
-scanner_ip = db.session.query(TCPSession.ip_src).filter(TCPSession.last_segm_tstmp > two_min_ago).group_by(TCPSession.ip_src).order_by(func.count(TCPSession.ip_src).desc()).first()[0]
-print(scanner_ip)
+c = Computer('192.168.1.1')
+db.session.add(c)
+db.session.commit()
