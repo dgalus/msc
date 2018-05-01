@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 from sqlalchemy import Column, Boolean, String, Integer, DateTime, ForeignKey
 from . import base
@@ -306,3 +307,6 @@ class Computer(base):
     
     def __init__(self, ip):
         self.ip = ip
+        l = [0] * 1440
+        d = { "mon" : l, "tue" : l, "wed" : l, "thu" : l, "fri" : l, "sat" : l, "sun" : l }
+        self.active_use_times = json.dumps(d)
