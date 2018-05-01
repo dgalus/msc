@@ -232,7 +232,6 @@ int main(int argc, char *argv[])
             perror("error in recvfrom()\n");
             continue;
         }
-
         processFrame(buffer, buflen);
     }
     free(buffer);

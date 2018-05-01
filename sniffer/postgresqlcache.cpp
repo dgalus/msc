@@ -13,7 +13,9 @@ PostgreSQLCache::PostgreSQLCache()
     activeTCPSessionsMutex.unlock();
 
     std::thread l(&PostgreSQLCache::insertLoop, this);
+    sleep(1);
     std::thread hl(&PostgreSQLCache::httpLoop, this);
+    sleep(1);
     std::thread acl(&PostgreSQLCache::activeTCPSessionsLoop, this);
     l.detach();
     hl.detach();
@@ -87,11 +89,13 @@ unsigned int PostgreSQLCache::getTCPSessionId(TCPSessionMin sessionData, TCPSegm
         if(it->first.ip_src == sessionData.ip_src && it->first.ip_dst == sessionData.ip_dst && it->first.src_port == sessionData.src_port && it->first.dst_port == sessionData.dst_port)
         {
             segment->direction = FROM_SRC_TO_DST;
+            activeTCPSessionsMutex.unlock();
             return it->second;
         }
         if(it->first.ip_src == sessionData.ip_dst && it->first.ip_dst == sessionData.ip_src && it->first.src_port == sessionData.dst_port && it->first.dst_port == sessionData.src_port)
         {
             segment->direction = FROM_DST_TO_SRC;
+            activeTCPSessionsMutex.unlock();
             return it->second;
         }
     }
@@ -190,7 +194,6 @@ void PostgreSQLCache::bulkInserSessionsToClose()
 
 void PostgreSQLCache::insertLoop()
 {
-    std::cerr << "insertLoop() " << std::this_thread::get_id() << " started!" << std::endl;
     try{
         while(true)
         {
@@ -214,7 +217,6 @@ void PostgreSQLCache::insertLoop()
 
 void PostgreSQLCache::httpLoop()
 {
-    std::cerr << "httpLoop() thread " << std::this_thread::get_id() << " started!" << std::endl;
     try{
         while(true)
         {
@@ -233,7 +235,6 @@ void PostgreSQLCache::httpLoop()
 
 void PostgreSQLCache::activeTCPSessionsLoop()
 {
-    std::cerr << "activeTCPSessionsLoop() thread " << std::this_thread::get_id() << " started!" << std::endl;
     try{
         while(true)
         {

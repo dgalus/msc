@@ -213,3 +213,96 @@ class FakeCounter(base):
         self.tcp_rst = tcp_rst
         self.tcp_rst_avg = tcp_rst_avg
         self.udp = udp
+        
+
+class L2TrafficForecast(base):
+    __tablename__ = 'l2_traffic_forecast'
+    id = Column(Integer, primary_key=True, nullable=False)
+    timestamp = Column(DateTime, nullable=False)
+    forecast = Column(Integer, nullable=False)
+    
+    def __init__(self, timestamp, forecast):
+        self.timestamp = timestamp
+        self.forecast = forecast
+        
+
+class AdminPendingTask(base):
+    __tablename__ = 'admin_pending_task'
+    id = Column(Integer, primary_key=True, nullable=False)
+    task = Column(String, nullable=False)
+    timestamp = Column(DateTime, nullable=False)
+    decision = Column(Boolean, nullable=True)
+    is_finished = Column(Boolean, nullable=False)
+    finished_timestamp = Column(DateTime, nullable=True)
+    
+    def __init__(self, task, timestamp=datetime.datetime.now()):
+        self.task = task
+        self.timestamp = timestamp
+        self.is_finished = False
+        
+
+class AnalyzedIP(base):
+    __tablename__ = 'analyzed_ip'
+    id = Column(Integer, primary_key=True, nullable=False)
+    ip = Column(String, nullable=False)
+    timestamp = Column(DateTime, nullable=False)
+    last_connection_timestamp = Column(DateTime, nullable=False)
+    ports = Column(String, nullable=False)
+    is_blacklisted = Column(String, nullable=False)
+    is_admin_safe = Column(String, nullable=True)
+    geolocation = Column(String, nullable=False)
+    connected_from = Column(String, nullable=False)
+    
+    def __init__(self, ip, last_connection_timestamp, ports, is_blacklisted, geolocation, connected_from, timestamp=datetime.datetime.now()):
+        self.ip = ip
+        self.last_connection_timestamp = last_connection_timestamp
+        self.ports = ports
+        self.is_blacklisted = is_blacklisted
+        self.geolocation = geolocation
+        self.connected_from = connected_from
+        self.timestamp = timestamp
+        
+
+class AnalyzedHTTPSite(base):
+    __tablename__ = 'analyzed_http_site'
+    id = Column(Integer, primary_key=True, nullable=False)
+    domain = Column(String, nullable=False)
+    urls = Column(String, nullable=False)
+    ip = Column(String, nullable=False)
+    geolocation = Column(String, nullable=True)
+    google_rank = Column(Integer, nullable=True)
+    duckduckgo_rank = Column(Integer, nullable=True)
+    last_visited = Column(DateTime, nullable=True)
+    is_admin_safe = Column(Boolean, nullable=True)
+    https = Column(Boolean, nullable=True)
+    hsts = Column(Boolean, nullable=True)
+    cors = Column(Boolean, nullable=True)
+    bayes_safe = Column(Boolean, nullable=True)
+    is_blacklisted = Column(Boolean, nullable=True)
+    rank = Column(Integer, nullable=True)
+    
+    def __init__(self, domain, urls, ip):
+        self.domain = domain
+        self.urls = urls
+        self.ip = ip
+        
+
+class Computer(base):
+    __tablename__ = 'computer'
+    id = Column(Integer, primary_key=True, nullable=False)
+    ip = Column(String, nullable=False)
+    alias = Column(String, nullable=True)
+    active_use_times = Column(String, nullable=True)
+    geolocations = Column(String, nullable=True)
+    default_gw_mac = Column(String, nullable=True)
+    default_gw_ip = Column(String, nullable=True)
+    open_ports = Column(String, nullable=True)
+    closed_ports = Column(String, nullable=True)
+    filtered_ports = Column(String, nullable=True)
+    last_ping_response_timestamp = Column(DateTime, nullable=True)
+    last_active = Column(DateTime, nullable=True)
+    last_port_scan = Column(DateTime, nullable=True)
+    most_connected_ports = Column(String, nullable=True)
+    
+    def __init__(self, ip):
+        self.ip = ip
