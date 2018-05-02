@@ -27,29 +27,22 @@
                       </tr>
                     </thead>
                     <tbody>
+                      {% for a in alerts: %}
                       <tr>
-                        <td>2018-02-21 08:20:21</td>
-                        <td>Unusual traffic from 10.0.0.3</td>
-                        <td>70%</td>
+                        <td>{{ a.timestamp }}</td>
+                        <td>[{{ a.alert_type }}] {{ a.description }}</td>
+                        <td>{{ a.rank }}%</td>
                         <td>
-                            <a type="button" class="btn btn-primary" href="#">View more</a>
+                            <a type="button" class="btn btn-primary" href="#">Mark as viewed</a>
                             <a type="button" class="btn btn-danger" href="#">Delete</a>
                         </td>
                       </tr>
-                      <tr>
-                        <td>2018-02-21 08:19:23</td>
-                        <td>Difference between TCP-SYN and TCP-ACK. Possible SYN-flood/port scan</td>
-                        <td>90%</td>
-                        <td>
-                            <a type="button" class="btn btn-primary" href="#">View more</a>
-                            <a type="button" class="btn btn-danger" href="#">Delete</a>
-                        </td>
-                      </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
               </div>
           </div>
       </div>
-      
+
 
 {% endblock %}
