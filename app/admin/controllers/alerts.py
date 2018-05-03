@@ -1,5 +1,4 @@
 from .. import *
-from sqlalchemy import _and
 
 @app.route('/alerts', methods=['GET'])
 def alerts():
