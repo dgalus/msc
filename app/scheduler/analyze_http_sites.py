@@ -37,7 +37,7 @@ def analyze_http_sites():
         else:
             domain = "http://"+s.domain
         r = requests.get(domain)
-        if r.url.startswith("https"):
+        if str(r.url).startswith("https"):
             s.https = True
         else:
             s.https = False
@@ -53,5 +53,24 @@ def analyze_http_sites():
             s.cors = False
         
         s.bayes_safe = is_bayes_safe(r.text)
-        s.rank = 0
+        if s.is_admin_safe:
+            s.rank = 100
+        else:
+            if s.is_blacklisted:
+                s.rank = 0
+            else:
+                s.rank = 100
+                if s.google_rank is None or s.google_rank > 10:
+                    s.rank -= 20
+                if s.duckduckgo_rank is None or s.duckduckgo_rank > 10:
+                    s.rank -= 20
+                if not s.https:
+                    s.rank -= 30
+                if not s.bayes_safe:
+                    s.rank -= 20
+                if not s.cors:
+                    s.rank -= 8
+                if not s.hsts:
+                    s.rank -= 2
+            
     db.session.commit()
