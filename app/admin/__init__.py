@@ -6,6 +6,7 @@ import sys
 import json
 
 from ..database import *
+from ..alert import AlertType
 config = json.load(open("config.json"))
 
 db = Database(config["database"]["user"], 
