@@ -14,7 +14,7 @@ def add_computers_and_last_active():
     current_time = datetime.datetime.now()
     minute_ago = current_time - datetime.timedelta(minutes=1)
     
-    sessions = db.session.query(TCPSession).filter(TCPSession.last_segm_tstmp < minute_ago).all()
+    sessions = db.session.query(TCPSession).filter(TCPSession.last_segm_tstmp > minute_ago).all()
     computers = db.session.query(Computer).all()
     
     ips_to_check = []

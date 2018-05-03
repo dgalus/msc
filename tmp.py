@@ -11,4 +11,4 @@
 
 from app.scheduler import *
 
-add_computers_and_last_active()
+delete_old()
