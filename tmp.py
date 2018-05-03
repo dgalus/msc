@@ -11,4 +11,4 @@
 
 from app.scheduler import *
 
-check_host_up()
+add_computers_and_last_active()
