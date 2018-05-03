@@ -270,6 +270,7 @@ class AnalyzedHTTPSite(base):
     domain = Column(String, nullable=False)
     urls = Column(String, nullable=False)
     ip = Column(String, nullable=False)
+    analyze_timestamp = Column(String, nullable=True)
     geolocation = Column(String, nullable=True)
     google_rank = Column(Integer, nullable=True)
     duckduckgo_rank = Column(Integer, nullable=True)

@@ -2,6 +2,7 @@ from .alert import *
 from .analysis import *
 from .anomaly_detection import *
 from .banlist import *
+from .bayes import *
 from .behaviour_models import *
 from .database import *
 from .email_sender import *
