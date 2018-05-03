@@ -10,5 +10,7 @@
 #print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
 
 from app.scheduler import *
+from app.search_engines import Google, DuckDuckGo
 
-delete_old()
+print(Google.get_position("google.com"))
+#analyze_http_sites()

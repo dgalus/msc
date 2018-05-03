@@ -18,7 +18,7 @@ def analyze_http_sites():
     unsafe_domain = db.session.query(UnsafeDomain.domain).all()
     unsafe_url = db.session.query(UnsafeURL.url).all()
     
-    sites = db.session.query(AnalyzedHTTPSite).filter(analyze_timestamp=None).all()
+    sites = db.session.query(AnalyzedHTTPSite).filter(AnalyzedHTTPSite.analyze_timestamp==None).all()
     for s in sites:
         s.analyze_timestamp = datetime.datetime.now()
         s.geolocation = GeoLocation.get_country_by_address(s.ip)
@@ -36,8 +36,11 @@ def analyze_http_sites():
             domain = s.domain
         else:
             domain = "http://"+s.domain
-        
-        s.https = False
+        r = requests.get(domain)
+        if r.url.startswith("https"):
+            s.https = True
+        else:
+            s.https = False
         
         r = requests.get(domain, allow_redirects=False)
         if "Strict-Transport-Security" in r.headers:
@@ -49,6 +52,6 @@ def analyze_http_sites():
         else:
             s.cors = False
         
-        s.bayes_safe = is_bayes_safe()
+        s.bayes_safe = is_bayes_safe(r.text)
         s.rank = 0
     db.session.commit()

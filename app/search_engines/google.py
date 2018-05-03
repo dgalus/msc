@@ -7,6 +7,6 @@ class Google:
         soup = BeautifulSoup(r.text, "html.parser")
         elements = soup.find_all("h3", class_="r")
         for i in range(0, len(elements)):
-            if "//" + domain in str(elements[i]):
+            if domain in str(elements[i]):
                 return i
         return None
