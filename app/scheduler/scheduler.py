@@ -5,6 +5,8 @@ from ..email_sender import send_alerts
 from ..geolocation import fix_unknown_geolocations
 from .close_sessions import close_sessions
 from .look_for_unsafe_ip import look_for_unsafe_ip
+from .add_computers import add_computers
+from .check_host_up import check_host_up
 
 class Scheduler:
     @staticmethod
@@ -13,6 +15,8 @@ class Scheduler:
         schedule.every(1).minutes.do(close_sessions)
         schedule.every(1).minutes.do(analyze_counters)
         schedule.every(1).minutes.do(look_for_unsafe_ip)
+        schedule.every(1).minutes.do(add_computers)
+        schedule.every(1).minutes.do(check_host_up)
         
         schedule.every(1).minutes.do(send_alerts)
         while 1:

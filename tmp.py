@@ -9,18 +9,6 @@
 
 #print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
 
-from app.database import Database, Computer
-from sqlalchemy import func
-import datetime
-import json
+from app.scheduler import *
 
-config = json.load(open("config.json"))
-db = Database(config["database"]["user"], 
-              config["database"]["password"], 
-              config["database"]["host"], 
-              config["database"]["port"], 
-              config["database"]["db"])
-
-c = Computer('192.168.1.1')
-db.session.add(c)
-db.session.commit()
+check_host_up()
