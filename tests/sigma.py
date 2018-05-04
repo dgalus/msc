@@ -17,12 +17,12 @@ def read_file(filename):
 traffic = read_file(TCP_SYN_FILE)
 
 def sigma():
-	traffic_without_duplicates = list(set(traffic))
-	for i in range(1000, len(traffic_without_duplicates)):
-		stddev = stdev(traffic_without_duplicates[i-1000:i])
-		avg = mean(traffic_without_duplicates[i-1000:i])
-		if traffic_without_duplicates[i] > (4*stddev)+avg:
-			print("traffic[" + str(i) + "] = " + str(traffic_without_duplicates[i]) + " sigma = " + str((4*stddev)+avg))
+    traffic_without_duplicates = list(set(traffic))
+    for i in range(1000, len(traffic_without_duplicates)):
+        stddev = stdev(traffic_without_duplicates[i-1000:i])
+        avg = mean(traffic_without_duplicates[i-1000:i])
+        if traffic_without_duplicates[i] > (4*stddev)+avg:
+            print("traffic[" + str(i) + "] = " + str(traffic_without_duplicates[i]) + " sigma = " + str((4*stddev)+avg))
 
 
 
@@ -31,35 +31,35 @@ def ClusterIndicesNumpy(clustNum, labels_array):
     return np.where(labels_array == clustNum)[0]
 
 def k_means():
-	cl=3
-	X = np.array(list(set(traffic)))
-	kmeans = KMeans(n_clusters=cl, max_iter=10000, random_state=0).fit(X.reshape(-1, 1))
-	print(kmeans.cluster_centers_)
-	for i in range(0, cl):
-		print(len(X[ClusterIndicesNumpy(i,kmeans.labels_)]))
+    cl=3
+    X = np.array(list(set(traffic)))
+    kmeans = KMeans(n_clusters=cl, max_iter=10000, random_state=0).fit(X.reshape(-1, 1))
+    print(kmeans.cluster_centers_)
+    for i in range(0, cl):
+        print(len(X[ClusterIndicesNumpy(i,kmeans.labels_)]))
 
 
 
 def distort():
-	distorions = []
-	for i in range(1, 11):
-		km = KMeans(n_clusters=i, init='k-means++', random_state=0)
-		X = np.array(list(set(traffic)))
-		km.fit(X.reshape(-1,1))
-		distorions.append(km.inertia_)
-	print(distorions)
-	plt.plot(range(1,11), distorions, marker='o')
-	plt.xlabel('Liczba skupień')
-	plt.ylabel('Zniekształcenie')
-	plt.show()
+    distorions = []
+    for i in range(1, 11):
+        km = KMeans(n_clusters=i, init='k-means++', random_state=0)
+        X = np.array(list(set(traffic)))
+        km.fit(X.reshape(-1,1))
+        distorions.append(km.inertia_)
+    print(distorions)
+    plt.plot(range(1,11), distorions, marker='o')
+    plt.xlabel('Liczba skupień')
+    plt.ylabel('Zniekształcenie')
+    plt.show()
 
 
 def histogram():
-	x = np.array(traffic)
-	plt.hist(x, bins=1000)
-	plt.ylabel('Ilość wystąpień')
-	plt.xlabel('Ilość segmentów TCP SYN')
-	plt.show()
+    x = np.array(traffic)
+    plt.hist(x, bins=1000)
+    plt.ylabel('Ilość wystąpień')
+    plt.xlabel('Ilość segmentów TCP SYN')
+    plt.show()
 
 
 
@@ -107,62 +107,62 @@ def holt_winters_forecast(series, season_length, alpha, beta, gamma, n_preds):
 
 
 def holt_long():
-	aver = []
-	st = traffic[4320:-1440]
-	m = mean(st)
-	res = holt_winters_forecast(st, 1440, 0.99, 0, 0.1, 1440)
-	aver = res[-1440:]
-	aver = res[-1440:]
-	l_ci = []
-	h_ci = []
-	for i in aver:
-		l_ci.append(i - m)
-		h_ci.append(i + m)
-	_, ax = plt.subplots()
-	ax.plot(range(0, 1440), traffic[-1440:], linewidth=0.7, color='#df9292', alpha=1, label="Rzeczywisty ruch")
-	ax.plot(range(0, 1440), aver, linewidth=0.7, color = '#539caf', alpha=1, label="Prognozowany ruch")
-	ax.fill_between(range(0, 1440), l_ci, h_ci, color = '#539caf', alpha = 0.4, label="Przedział ufności")
-	ax.set_title("Prognozowanie Holta-Wintersa dla TCP SYN")
-	ax.set_xlabel("Czas")
-	ax.set_ylabel("Ilość segmentów TCP SYN")
-	ax.legend(loc='best')
-	plt.savefig('hw.svg', format="svg")
-	plt.clf()
+    aver = []
+    st = traffic[4320:-1440]
+    m = mean(st)
+    res = holt_winters_forecast(st, 1440, 0.99, 0, 0.1, 1440)
+    aver = res[-1440:]
+    aver = res[-1440:]
+    l_ci = []
+    h_ci = []
+    for i in aver:
+        l_ci.append(i - m)
+        h_ci.append(i + m)
+    _, ax = plt.subplots()
+    ax.plot(range(0, 1440), traffic[-1440:], linewidth=0.7, color='#df9292', alpha=1, label="Rzeczywisty ruch")
+    ax.plot(range(0, 1440), aver, linewidth=0.7, color = '#539caf', alpha=1, label="Prognozowany ruch")
+    ax.fill_between(range(0, 1440), l_ci, h_ci, color = '#539caf', alpha = 0.4, label="Przedział ufności")
+    ax.set_title("Prognozowanie Holta-Wintersa dla TCP SYN")
+    ax.set_xlabel("Czas")
+    ax.set_ylabel("Ilość segmentów TCP SYN")
+    ax.legend(loc='best')
+    plt.savefig('hw.svg', format="svg")
+    plt.clf()
 
 def holt_short():
-	aver = []
-	st = traffic[1440:4320]
-	m = mean(st)
-	res = holt_winters_forecast(st, 1440, 0.99, 0, 0.1, 1440)
-	aver = res[-1440:]
-	l_ci = []
-	h_ci = []
-	for i in aver:
-		l_ci.append(i - m)
-		h_ci.append(i + m)
-	_, ax = plt.subplots()
-	ax.plot(range(0, 1440), traffic[5760:5760+1440], linewidth=0.7, color='#df9292', alpha=1, label="Rzeczywisty ruch")
-	ax.plot(range(0, 1440), aver, linewidth=0.7, color = '#539caf', alpha=1, label="Prognozowany ruch")
-	ax.fill_between(range(0, 1440), l_ci, h_ci, color = '#539caf', alpha = 0.4, label="Przedział ufności")
-	ax.set_title("Prognozowanie Holta-Wintersa dla TCP SYN")
-	ax.set_xlabel("Czas")
-	ax.set_ylabel("Ilość segmentów TCP SYN")
-	ax.legend(loc='best')
-	plt.savefig('hw_short.svg', format="svg")
-	plt.clf()
+    aver = []
+    st = traffic[1440:4320]
+    m = mean(st)
+    res = holt_winters_forecast(st, 1440, 0.99, 0, 0.1, 1440)
+    aver = res[-1440:]
+    l_ci = []
+    h_ci = []
+    for i in aver:
+        l_ci.append(i - m)
+        h_ci.append(i + m)
+    _, ax = plt.subplots()
+    ax.plot(range(0, 1440), traffic[5760:5760+1440], linewidth=0.7, color='#df9292', alpha=1, label="Rzeczywisty ruch")
+    ax.plot(range(0, 1440), aver, linewidth=0.7, color = '#539caf', alpha=1, label="Prognozowany ruch")
+    ax.fill_between(range(0, 1440), l_ci, h_ci, color = '#539caf', alpha = 0.4, label="Przedział ufności")
+    ax.set_title("Prognozowanie Holta-Wintersa dla TCP SYN")
+    ax.set_xlabel("Czas")
+    ax.set_ylabel("Ilość segmentów TCP SYN")
+    ax.legend(loc='best')
+    plt.savefig('hw_short.svg', format="svg")
+    plt.clf()
 
 def sigmoid(a, b, x):
-	return 1./(1+math.exp(-1.*a*(x-b)))
-	
+    return 1./(1+math.exp(-1.*a*(x-b)))
+
 def draw_sigmoid():
-	a = 0.2
-	b = 1
-	res = []
-	for i in range(-10, 11):
-		res.append(sigmoid(a, b, i))
-	plt.plot(range(-10,11), res, marker='o')
-	plt.show()
-	
+    a = 0.2
+    b = 1
+    res = []
+    for i in range(-10, 11):
+        res.append(sigmoid(a, b, i))
+    plt.plot(range(-10,11), res, marker='o')
+    plt.show()
+
 print(sigmoid(0.5, 1, 5000))
 
 draw_sigmoid()
