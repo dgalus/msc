@@ -8,7 +8,6 @@ from ..database import Database, UnsafeDomain, UnsafeIP, UnsafeURL
 
 def initialize_unsafe_connections_list():
     config = json.load(open("config.json"))
-    
     db = Database(config["database"]["user"], 
                   config["database"]["password"], 
                   config["database"]["host"], 
