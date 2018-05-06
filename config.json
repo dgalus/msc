@@ -23,5 +23,9 @@
         "db" : "sniffer",
         "port" : 5432,
         "host" : "127.0.0.1"
+    },
+    "system" : {
+        "long_forecast_traffic_interval" : 1.7,
+        "sigmas" : 4
     }
 }

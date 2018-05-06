@@ -1,15 +1,16 @@
 from ..database import *
 from ..alert import  generate_alert, AlertType, HighTrafficAmountAlert, TcpSynScanAlert, SynFloodAlert, TcpFinScanAlert
-from sqlalchemy import func
+from sqlalchemy import func, and_
 import statistics
 import datetime
 import json
 
 def is_outlier(traffic, test_value):
+    config = json.load(open("config.json"))
     traffic_without_duplicates = list(set(traffic))
     stddev = stdev(traffic_without_duplicates)
     avg = mean(traffic_without_duplicates)
-    if test_value > (4*stddev)+avg:
+    if test_value > (config['system']['sigmas']*stddev)+avg:
         return True
     return False
 
@@ -17,7 +18,7 @@ def is_outlier_by_last(traffic, test_value):
     traffic_without_duplicates = list(set(traffic))
     stddev = stdev(traffic_without_duplicates)
     last = traffic[-1]
-    if test_value > (4*stddev)+last:
+    if test_value > (config['system']['sigmas']*stddev)+last:
         return True
     return False
 
@@ -27,7 +28,7 @@ def analyze_counters():
                   config["database"]["password"], 
                   config["database"]["host"], 
                   config["database"]["port"], 
-                  config["database"]["db"])    
+                  config["database"]["db"])
     last_counters = db.session.query(Counter).order_by(Counter.id.desc()).limit(1000)
     last_fake_counters = db.session.query(FakeCounter).order_by(FakeCounter.id.desc()).limit(1000)
     lfc_syn = []
@@ -42,17 +43,29 @@ def analyze_counters():
         if len(last_counters) > 100:
             # high traffic amount
             if is_outlier(lc_l2traffic[:-1], lc_l2traffic[-1]):
-                # TODO: check long-term forecast
-            
-                # check short-term forecast
-                if is_outlier_by_last(lc_l2traffic[:-1], lc_l2traffic[-1]):
-                    ht = HighTrafficAmountAlert()
-                    if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
-                        rank = 60
-                    else:
-                        rank = 20
-                    generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
-            
+                # check long-term forecast
+                one_minute = datetime.timedelta(minutes=1)
+                current_time = datetime.datetime.now()
+                ltf = db.session.query(L2TrafficForecast.forecast).filter(and_(L2TrafficForecast.timestamp <= (current_time+one_minute), L2TrafficForecast.timestamp >= current_time)).first()
+                if ltf:
+                    if lc_l2traffic > (ltf*config['system']['long_forecast_traffic_interval']):
+                        # check short-term forecast
+                        if is_outlier_by_last(lc_l2traffic[:-1], lc_l2traffic[-1]):
+                            ht = HighTrafficAmountAlert()
+                            if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
+                                rank = 60
+                            else:
+                                rank = 20
+                            generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
+                else:
+                    # check short-term forecast
+                    if is_outlier_by_last(lc_l2traffic[:-1], lc_l2traffic[-1]):
+                        ht = HighTrafficAmountAlert()
+                        if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
+                            rank = 60
+                        else:
+                            rank = 20
+                        generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
             # higher tcp_syn (fake_counters)
             if is_outlier(lfc_syn, last_counters[-1].tcp_syn):
                 new_tcp_syn = last_fake_counters[-1].tcp_syn_avg
