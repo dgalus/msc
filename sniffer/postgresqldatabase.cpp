@@ -140,6 +140,7 @@ unsigned int PostgresqlDatabase::insertTCPSession(TCPSession session)
     }
     catch(const std::exception &e)
     {
+        dbMutex.unlock();
         std::cerr << e.what() << std::endl;
         return 0;
     }
@@ -263,6 +264,7 @@ bool PostgresqlDatabase::executeQuery(std::string query)
     }
     catch(const std::exception &e)
     {
+        dbMutex.unlock();
         std::cerr << e.what() << std::endl;
         return false;
     }
