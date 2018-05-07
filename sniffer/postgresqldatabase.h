@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <mutex>
 #include <string>
 #include <pqxx/pqxx>
 
@@ -30,6 +31,8 @@ public:
     bool executeQuery(std::string query);
 private:
     pqxx::connection* conn;
+    pqxx::nontransaction* work;
+    std::mutex dbMutex;
 };
 
 #endif // POSTGRESQLDATABASE_H

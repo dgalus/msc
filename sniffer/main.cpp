@@ -154,7 +154,9 @@ void processFrame(char *buffer, int buflen)
             if(found != std::string::npos)
             {
                 std::cout << "HTTP" << std::endl;
-                std::cout << getStrBetweenTwoStr(contents, "Host: ", "\r\n") << std::endl;
+                std::cout << "IP: " << destination_ip << std::endl;
+                std::cout << "URL: " << getStrBetweenTwoStr(contents, "GET ", "HTTP") << std::endl;
+                std::cout << "HOST: " << getStrBetweenTwoStr(contents, "Host: ", "\r\n") << std::endl;
             }
         }
         else if(iph->protocol == 17)

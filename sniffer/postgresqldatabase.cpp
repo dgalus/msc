@@ -24,9 +24,10 @@ std::vector<std::string> PostgresqlDatabase::getUnsafeDomains()
 {
     std::vector<std::string> domains;
     std::string sql = "select domain from unsafe_domain;";
+    dbMutex.lock();
     pqxx::nontransaction N(*conn);
     pqxx::result R(N.exec(sql.c_str()));
-
+    dbMutex.unlock();
     for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
     {
         domains.push_back(c[0].as<std::string>());
@@ -38,8 +39,10 @@ std::vector<std::string> PostgresqlDatabase::getUnsafeIPs()
 {
     std::vector<std::string> ips;
     std::string sql = "select ip from unsafe_ip;";
+    dbMutex.lock();
     pqxx::nontransaction N(*conn);
     pqxx::result R(N.exec(sql.c_str()));
+    dbMutex.unlock();
 
     for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
     {
@@ -52,8 +55,10 @@ std::vector<std::string> PostgresqlDatabase::getUnsafeURLs()
 {
     std::vector<std::string> urls;
     std::string sql = "select url from unsafe_url;";
+    dbMutex.lock();
     pqxx::nontransaction N(*conn);
     pqxx::result R(N.exec(sql.c_str()));
+    dbMutex.unlock();
 
     for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
     {
@@ -66,8 +71,10 @@ std::vector<std::pair<std::string, std::string>> PostgresqlDatabase::getARPTable
 {
     std::vector<std::pair<std::string, std::string>> arpTable;
     std::string query = "select * from arp;";
+    dbMutex.lock();
     pqxx::nontransaction N(*conn);
     pqxx::result R(N.exec(query.c_str()));
+    dbMutex.unlock();
     for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
         arpTable.push_back(std::pair<std::string, std::string>(c[0].as<std::string>(), c[1].as<std::string>()));
     return arpTable;
@@ -121,9 +128,11 @@ unsigned int PostgresqlDatabase::insertTCPSession(TCPSession session)
                         "'" + session.ip_src + "', " + std::to_string(session.src_port) + ", '" + session.ip_dst + "', " + std::to_string(session.dst_port) + ", "
                         + ((session.is_active) ? "TRUE" : "FALSE") + ", '" + session.first_segm_tstmp + "', '" + session.last_segm_tstmp + "', '" + session.remote_geolocation + "') returning id";
     try{
+        dbMutex.lock();
         pqxx::work W(*conn);
         pqxx::result R(W.exec(query.c_str()));
         W.commit();
+        dbMutex.unlock();
         for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
         {
             return c[0].as<unsigned int>();
@@ -208,8 +217,10 @@ std::vector<std::pair<TCPSessionMin, unsigned int>> PostgresqlDatabase::getActiv
 {
     std::vector<std::pair<TCPSessionMin, unsigned int>> ret;
     std::string sql = "select id, ip_src, src_port, ip_dst, dst_port from tcp_session where is_active = true;";
+    dbMutex.lock();
     pqxx::nontransaction N(*conn);
     pqxx::result R(N.exec(sql.c_str()));
+    dbMutex.unlock();
 
     for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
     {
@@ -243,9 +254,11 @@ void PostgresqlDatabase::closeTCPSessions(std::vector<unsigned int> sessionIds)
 bool PostgresqlDatabase::executeQuery(std::string query)
 {
     try{
+        dbMutex.lock();
         pqxx::work W(*conn);
         W.exec(query.c_str());
         W.commit();
+        dbMutex.unlock();
         return true;
     }
     catch(const std::exception &e)
