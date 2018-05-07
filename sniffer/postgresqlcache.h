@@ -23,6 +23,7 @@ public:
     void pushICMPSegment(ICMPSegment segment);
     void pushUDPSegment(UDPSegment segment);
     void pushHTTP(HTTPSite site);
+    void pushARP(std::string mac, std::string ip);
     bool isDomainSafe(std::string& domain);
     bool isURLSafe(std::string& url);
     bool isIPSafe(std::string& ip);
@@ -43,6 +44,7 @@ private:
     std::mutex icmpSegmentsMutex;
     std::mutex udpSegmentsMutex;
     std::mutex httpMutex;
+    std::mutex arpMutex;
     std::mutex sessionsToCloseMutex;
     std::mutex activeTCPSessionsMutex;
 

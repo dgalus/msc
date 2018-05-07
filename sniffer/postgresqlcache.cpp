@@ -7,7 +7,9 @@ PostgreSQLCache::PostgreSQLCache()
     unsafeDomains = db->getUnsafeDomains();
     unsafeIPs = db->getUnsafeIPs();
     unsafeURLs = db->getUnsafeURLs();
+    arpMutex.lock();
     arpTable = db->getARPTable();
+    arpMutex.unlock();
     activeTCPSessionsMutex.lock();
     activeTCPSessions = db->getActiveTCPSessions();
     activeTCPSessionsMutex.unlock();
@@ -81,6 +83,17 @@ void PostgreSQLCache::pushHTTP(HTTPSite site)
         }
     }
     httpMutex.unlock();
+}
+
+void PostgreSQLCache::pushARP(std::string mac, std::string ip)
+{
+    arpMutex.lock();
+    bool found = false;
+    for(auto it = arpTable.begin(); it != arpTable.end(); it++)
+    {
+        
+    }
+    arpMutex.unlock();
 }
 
 bool PostgreSQLCache::isDomainSafe(std::string &domain)
