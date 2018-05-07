@@ -278,7 +278,8 @@ void PostgresqlDatabase::updateHTTPSites(std::vector<std::pair<unsigned int, HTT
                 query += "when id = " + std::to_string(it->first) + " then '" + it->second.url + "'";
             }
         }
-        query += " end where id in (";
+        query += " end, last_visited = to_timestamp('" + getCurrentDateTime() + "', 'YYYY-MM-DD hh24:mi:ss')::timestamp without time zone ";
+        query += "where id in (";
         for(unsigned int i = 0; i < ids.size(); i++)
         {
             query += std::to_string(ids[i]);
@@ -287,7 +288,6 @@ void PostgresqlDatabase::updateHTTPSites(std::vector<std::pair<unsigned int, HTT
             else
                 query += "); ";
         }
-        std::cout << query <<std::endl;
         executeQuery(query);
         for(auto it = httpSites.begin(); it != httpSites.end(); it++)
             it->second.update = false;

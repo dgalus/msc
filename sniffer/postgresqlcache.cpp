@@ -11,6 +11,9 @@ PostgreSQLCache::PostgreSQLCache()
     activeTCPSessionsMutex.lock();
     activeTCPSessions = db->getActiveTCPSessions();
     activeTCPSessionsMutex.unlock();
+    httpMutex.lock();
+    httpSites = db->getHTTPSites();
+    httpMutex.unlock();
 
     std::thread l(&PostgreSQLCache::insertLoop, this);
     sleep(1);

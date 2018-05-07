@@ -158,10 +158,6 @@ void processFrame(char *buffer, int buflen)
                 hs.url = getStrBetweenTwoStr(contents, "GET ", "HTTP");
                 hs.domain = getStrBetweenTwoStr(contents, "Host: ", "\r\n");
                 pc->pushHTTP(hs);
-                std::cout << "HTTP" << std::endl;
-                std::cout << "IP: " << destination_ip << std::endl;
-                std::cout << "URL: " << getStrBetweenTwoStr(contents, "GET ", "HTTP") << std::endl;
-                std::cout << "HOST: " << getStrBetweenTwoStr(contents, "Host: ", "\r\n") << std::endl;
             }
         }
         else if(iph->protocol == 17)
