@@ -258,6 +258,42 @@ void PostgresqlDatabase::updateTCPSessionLastTimestamp(std::vector<std::pair<int
     }
 }
 
+void PostgresqlDatabase::updateHTTPSites(std::vector<std::pair<unsigned int, HTTPSite>> &httpSites)
+{
+    std::vector<unsigned int> ids;
+    for(auto it = httpSites.begin(); it != httpSites.end(); it++)
+    {
+        if(it->second.update)
+        {
+            ids.push_back(it->first);
+        }
+    }
+    if(ids.size() > 0)
+    {
+        std::string query = "update analyzed_http_site set urls = case ";
+        for(auto it = httpSites.begin(); it != httpSites.end(); it++)
+        {
+            if(it->second.update)
+            {
+                query += "when id = " + std::to_string(it->first) + " then '" + it->second.url + "'";
+            }
+        }
+        query += " end where id in (";
+        for(unsigned int i = 0; i < ids.size(); i++)
+        {
+            query += std::to_string(ids[i]);
+            if(i < ids.size()-1)
+                query += ", ";
+            else
+                query += "); ";
+        }
+        std::cout << query <<std::endl;
+        executeQuery(query);
+        for(auto it = httpSites.begin(); it != httpSites.end(); it++)
+            it->second.update = false;
+    }
+}
+
 std::vector<std::pair<TCPSessionMin, unsigned int>> PostgresqlDatabase::getActiveTCPSessions()
 {
     std::vector<std::pair<TCPSessionMin, unsigned int>> ret;

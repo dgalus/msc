@@ -61,7 +61,7 @@ void PostgreSQLCache::pushHTTP(HTTPSite site)
             found = true;
             it->second.update = true;
             std::size_t pos = it->second.url.find(site.url);
-            if(pos != std::string::npos)
+            if(pos == std::string::npos)
             {
                 it->second.url += " " + site.url;
             }
@@ -243,9 +243,9 @@ void PostgreSQLCache::httpLoop()
     try{
         while(true)
         {
-            sleep(20);
+            sleep(10);
             httpMutex.lock();
-            
+            db->updateHTTPSites(httpSites);
             httpMutex.unlock();
         }
     }
