@@ -50,11 +50,11 @@ void PostgreSQLCache::pushUDPSegment(UDPSegment segment)
     udpSegmentsMutex.unlock();
 }
 
-void PostgreSQLCache::pushHTTP(std::string httpContent)
+void PostgreSQLCache::pushHTTP(std::string ip, std::string domain, std::string url)
 {
-    httpContentsMutex.lock();
-    httpContents.push_back(httpContent);
-    httpContentsMutex.unlock();
+    httpMutex.lock();
+    
+    httpMutex.unlock();
 }
 
 bool PostgreSQLCache::isDomainSafe(std::string &domain)
@@ -221,9 +221,9 @@ void PostgreSQLCache::httpLoop()
         while(true)
         {
             sleep(20);
-            httpContentsMutex.lock();
+            httpMutex.lock();
             
-            httpContentsMutex.unlock();
+            httpMutex.unlock();
         }
     }
     catch(const std::exception& e)

@@ -54,5 +54,10 @@ struct ARPPacket {
 
 };
 
+struct HTTPSite {
+    std::string ip;
+    std::string domain;
+    std::string url;
+};
 
 #endif // STRUCTURES_H

@@ -22,7 +22,7 @@ public:
     void pushTCPSegment(TCPSessionMin session, TCPSegment segment);
     void pushICMPSegment(ICMPSegment segment);
     void pushUDPSegment(UDPSegment segment);
-    void pushHTTP(std::string httpContent);
+    void pushHTTP(std::string ip, std::string domain, std::string url);
     bool isDomainSafe(std::string& domain);
     bool isURLSafe(std::string& url);
     bool isIPSafe(std::string& ip);
@@ -42,7 +42,7 @@ private:
     std::mutex tcpSegmentsMutex;
     std::mutex icmpSegmentsMutex;
     std::mutex udpSegmentsMutex;
-    std::mutex httpContentsMutex;
+    std::mutex httpMutex;
     std::mutex sessionsToCloseMutex;
     std::mutex activeTCPSessionsMutex;
 
@@ -50,7 +50,7 @@ private:
     std::vector<std::pair<unsigned int, TCPSegment>> tcpSegments;
     std::vector<ICMPSegment> icmpSegments;
     std::vector<UDPSegment> udpSegments;
-    std::vector<std::string> httpContents;
+    std::vector<std::string> http;
     std::vector<std::string> unsafeURLs;
     std::vector<std::string> unsafeDomains;
     std::vector<std::string> unsafeIPs;

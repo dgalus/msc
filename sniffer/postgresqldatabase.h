@@ -31,7 +31,6 @@ public:
     bool executeQuery(std::string query);
 private:
     pqxx::connection* conn;
-    pqxx::nontransaction* work;
     std::mutex dbMutex;
 };
 
