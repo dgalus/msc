@@ -25,7 +25,7 @@
 
 PostgreSQLCache *pc;
 
-void processFrame(unsigned char *buffer, int buflen)
+void processFrame(char *buffer, int buflen)
 {
     struct ethhdr *eth = (struct ethhdr *)(buffer);
     char source_addr[18];
@@ -149,6 +149,13 @@ void processFrame(unsigned char *buffer, int buflen)
             pc->pushTCPSegment(tcp_sess_min, tcp_seg);
             
             // check for HTTP
+            std::string contents(buffer, buflen);
+            std::size_t found = contents.find(" HTTP/1.1\r\n");
+            if(found != std::string::npos)
+            {
+                std::cout << "HTTP" << std::endl;
+                std::cout << getStrBetweenTwoStr(contents, "Host: ", "\r\n") << std::endl;
+            }
         }
         else if(iph->protocol == 17)
         {
@@ -221,7 +228,7 @@ int main(int argc, char *argv[])
 
     pc = new PostgreSQLCache();
 
-    unsigned char *buffer = (unsigned char *) malloc(BUFSIZE);
+    char *buffer = (char *) malloc(BUFSIZE);
     while(true)
     {
         memset(buffer, 0, BUFSIZE);
