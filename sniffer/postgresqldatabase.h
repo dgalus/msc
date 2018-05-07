@@ -19,6 +19,7 @@ public:
     std::vector<std::string> getUnsafeIPs();
     std::vector<std::string> getUnsafeURLs();
     std::vector<std::pair<std::string, std::string>> getARPTable();
+    std::vector<std::pair<unsigned int, HTTPSite>> getHTTPSites();
     void insertNewTCPSessions(std::vector<TCPSession> sessions);
     void insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments);
     unsigned int insertTCPSession(TCPSession session);

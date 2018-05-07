@@ -20,6 +20,27 @@ PostgresqlDatabase::~PostgresqlDatabase()
     delete conn;
 }
 
+std::vector<std::pair<unsigned int, HTTPSite>> PostgresqlDatabase::getHTTPSites()
+{
+    std::vector<std::pair<unsigned int, HTTPSite>> httpSites;
+    std::string sql = "select * from analyzed_http_site;";
+    dbMutex.lock();
+    pqxx::nontransaction N(*conn);
+    pqxx::result R(N.exec(sql.c_str()));
+    dbMutex.unlock();
+    for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
+    {
+        unsigned int id = c[0].as<unsigned int>();
+        HTTPSite hs;
+        hs.domain = c[1].as<std::string>();
+        hs.url = c[2].as<std::string>();
+        hs.ip = c[3].as<std::string>();
+        httpSites.push_back(std::pair<unsigned int, HTTPSite>(id, hs));
+    }
+    
+    return httpSites;
+}
+
 std::vector<std::string> PostgresqlDatabase::getUnsafeDomains()
 {
     std::vector<std::string> domains;
