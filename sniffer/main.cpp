@@ -153,6 +153,11 @@ void processFrame(char *buffer, int buflen)
             std::size_t found = contents.find(" HTTP/1.1\r\n");
             if(found != std::string::npos)
             {
+                HTTPSite hs;
+                hs.ip = destination_ip;
+                hs.url = getStrBetweenTwoStr(contents, "GET ", "HTTP");
+                hs.domain = getStrBetweenTwoStr(contents, "Host: ", "\r\n");
+                pc->pushHTTP(hs);
                 std::cout << "HTTP" << std::endl;
                 std::cout << "IP: " << destination_ip << std::endl;
                 std::cout << "URL: " << getStrBetweenTwoStr(contents, "GET ", "HTTP") << std::endl;

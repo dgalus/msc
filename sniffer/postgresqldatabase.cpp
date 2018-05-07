@@ -37,7 +37,6 @@ std::vector<std::pair<unsigned int, HTTPSite>> PostgresqlDatabase::getHTTPSites(
         hs.ip = c[3].as<std::string>();
         httpSites.push_back(std::pair<unsigned int, HTTPSite>(id, hs));
     }
-    
     return httpSites;
 }
 
@@ -148,6 +147,30 @@ unsigned int PostgresqlDatabase::insertTCPSession(TCPSession session)
     std::string query = "insert into tcp_session (id, ip_src, src_port, ip_dst, dst_port, is_active, first_segm_tstmp, last_segm_tstmp, remote_geolocation) values (DEFAULT, "
                         "'" + session.ip_src + "', " + std::to_string(session.src_port) + ", '" + session.ip_dst + "', " + std::to_string(session.dst_port) + ", "
                         + ((session.is_active) ? "TRUE" : "FALSE") + ", '" + session.first_segm_tstmp + "', '" + session.last_segm_tstmp + "', '" + session.remote_geolocation + "') returning id";
+    try{
+        dbMutex.lock();
+        pqxx::work W(*conn);
+        pqxx::result R(W.exec(query.c_str()));
+        W.commit(); 
+        dbMutex.unlock();
+        for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
+        {
+            return c[0].as<unsigned int>();
+        }
+    }
+    catch(const std::exception &e)
+    {
+        dbMutex.unlock();
+        std::cerr << e.what() << std::endl;
+        return 0;
+    }
+    return 0;
+}
+
+unsigned int PostgresqlDatabase::insertHTTPSite(HTTPSite site)
+{
+    std::string query = "insert into analyzed_http_site (id, domain, urls, ip, last_visited) values (DEFAULT, "
+                        "'" + site.domain+ "', '" + site.url + "', '" + site.ip + "', '" + getCurrentDateTime() + "') returning id";
     try{
         dbMutex.lock();
         pqxx::work W(*conn);

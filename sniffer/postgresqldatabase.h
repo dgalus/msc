@@ -9,6 +9,7 @@
 
 #include "structures.h"
 #include "counters.h"
+#include "utils.h"
 
 class PostgresqlDatabase
 {
@@ -23,6 +24,7 @@ public:
     void insertNewTCPSessions(std::vector<TCPSession> sessions);
     void insertTCPSegments(std::vector<std::pair<unsigned int, TCPSegment>> segments);
     unsigned int insertTCPSession(TCPSession session);
+    unsigned int insertHTTPSite(HTTPSite site);
     void insertUDPSegments(std::vector<UDPSegment> segments);
     void insertICMPSegments(std::vector<ICMPSegment> segments);
     void insertCounters(Counters counters, std::string timestamp);

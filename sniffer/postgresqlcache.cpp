@@ -50,10 +50,33 @@ void PostgreSQLCache::pushUDPSegment(UDPSegment segment)
     udpSegmentsMutex.unlock();
 }
 
-void PostgreSQLCache::pushHTTP(std::string ip, std::string domain, std::string url)
+void PostgreSQLCache::pushHTTP(HTTPSite site)
 {
     httpMutex.lock();
-    
+    bool found = false;
+    for(auto it = httpSites.begin(); it != httpSites.end(); it++)
+    {
+        if(it->second.domain == site.domain && it->second.ip == site.ip)
+        {
+            found = true;
+            it->second.update = true;
+            std::size_t pos = it->second.url.find(site.url);
+            if(pos != std::string::npos)
+            {
+                it->second.url += " " + site.url;
+            }
+            break;
+        }
+    }
+    if(!found)
+    {
+        unsigned int id = db->insertHTTPSite(site);
+        if(id > 0)
+        {
+            site.update = false;
+            httpSites.push_back(std::pair<unsigned int, HTTPSite>(id, site));
+        }
+    }
     httpMutex.unlock();
 }
 

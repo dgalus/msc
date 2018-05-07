@@ -58,6 +58,7 @@ struct HTTPSite {
     std::string ip;
     std::string domain;
     std::string url;
+    bool update = false;
 };
 
 #endif // STRUCTURES_H
