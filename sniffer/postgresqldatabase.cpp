@@ -191,6 +191,29 @@ unsigned int PostgresqlDatabase::insertHTTPSite(HTTPSite site)
     return 0;
 }
 
+unsigned int PostgresqlDatabase::insertARP(std::string mac, std::string ip)
+{
+    std::string query = "insert into arp (id, ip, mac) values (DEFAULT, '" + ip + "', '" + mac + "');";
+    try{
+        dbMutex.lock();
+        pqxx::work W(*conn);
+        pqxx::result R(W.exec(query.c_str()));
+        W.commit();
+        dbMutex.unlock();
+        for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
+        {
+            return c[0].as<unsigned int>();
+        }
+    }
+    catch(const std::exception &e)
+    {
+        dbMutex.unlock();
+        std::cerr << e.what() << std::endl;
+        return 0;
+    }
+    return 0;
+}
+
 void PostgresqlDatabase::insertUDPSegments(std::vector<UDPSegment> segments)
 {
     if(segments.size() > 0)
