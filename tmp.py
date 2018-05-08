@@ -9,6 +9,6 @@
 
 #print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
 
-from app.scheduler import download_banlists
+from app.scheduler import analyze_new_computers
 
-download_banlists()
+analyze_new_computers()

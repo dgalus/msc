@@ -11,6 +11,7 @@ from .delete_old import delete_old
 from .analyze_http_sites import analyze_http_sites
 from .generate_l2_traffic_forecast import generate_l2_traffic_forecast
 from .download_banlists import download_banlists
+from .analyze_new_computers import analyze_new_computers
 
 class Scheduler:
     @staticmethod
@@ -22,6 +23,7 @@ class Scheduler:
         schedule.every(1).minutes.do(add_computers_and_last_active)
         schedule.every(1).minutes.do(check_host_up)
         schedule.every(1).minutes.do(analyze_http_sites)
+        schedule.every(10).minutes.do(analyze_new_computers)
         schedule.every(1).day.do(delete_old)
         schedule.every(1).day.do(download_banlists)
         schedule.every(1).day.do(generate_l2_traffic_forecast)

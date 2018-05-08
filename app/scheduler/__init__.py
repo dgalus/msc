@@ -7,3 +7,4 @@ from .delete_old import delete_old
 from .analyze_http_sites import analyze_http_sites
 from .generate_l2_traffic_forecast import generate_l2_traffic_forecast
 from .download_banlists import download_banlists
+from .analyze_new_computers import analyze_new_computers
