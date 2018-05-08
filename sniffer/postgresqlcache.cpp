@@ -91,7 +91,19 @@ void PostgreSQLCache::pushARP(std::string mac, std::string ip)
     bool found = false;
     for(auto it = arpTable.begin(); it != arpTable.end(); it++)
     {
-        // TODO
+        if(it->first == ip)
+        {
+            found = true;
+            if(it->second != mac)
+            {
+                db->insertArpSpoofingAlert(ip, mac, it->second);
+            }
+        }
+    }
+    if(!found)
+    {
+        db->insertARP(mac, ip);
+        arpTable.push_back(std::pair<std::string, std::string>(ip, mac));
     }
     arpMutex.unlock();
 }

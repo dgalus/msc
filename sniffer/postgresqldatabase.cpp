@@ -96,7 +96,7 @@ std::vector<std::pair<std::string, std::string>> PostgresqlDatabase::getARPTable
     pqxx::result R(N.exec(query.c_str()));
     dbMutex.unlock();
     for(pqxx::result::const_iterator c = R.begin(); c != R.end(); c++)
-        arpTable.push_back(std::pair<std::string, std::string>(c[0].as<std::string>(), c[1].as<std::string>()));
+        arpTable.push_back(std::pair<std::string, std::string>(c[1].as<std::string>(), c[2].as<std::string>()));
     return arpTable;
 }
 
