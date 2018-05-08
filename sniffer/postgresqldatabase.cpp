@@ -214,6 +214,19 @@ unsigned int PostgresqlDatabase::insertARP(std::string mac, std::string ip)
     return 0;
 }
 
+void PostgresqlDatabase::insertArpSpoofingAlert(std::string ipAddr, std::string arpMac, std::string dbMac)
+{
+    std::string description = ipAddr + " is known under " + dbMac + " but " + arpMac + " found in reply. Check for ARP spoofing.";
+    int alertType = 1;
+    int rank = 50;
+    std::string timestamp = getCurrentDateTime();
+    
+    std::string query = "insert into alert (id, description, alert_type, rank, notification_sent, admin_delete, timestamp) values "
+                        "(DEFAULT, '" + description + "', " + std::to_string(alertType) + ", " + std::to_string(rank) + ", FALSE, FALSE, "
+                        "'" + timestamp + "');";
+    executeQuery(query);
+}
+
 void PostgresqlDatabase::insertUDPSegments(std::vector<UDPSegment> segments)
 {
     if(segments.size() > 0)

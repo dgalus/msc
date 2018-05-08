@@ -25,7 +25,7 @@ class ARPSpoofingAlert:
         self.db_mac = db_mac
     
     def __str__(self):
-        return ip.addr + " is known under " + db_mac + " but " + arp_mac + " found in reply. Check for ARP spoofing."
+        return ip_addr + " is known under " + db_mac + " but " + arp_mac + " found in reply. Check for ARP spoofing."
 
 
 class NewHostDetectedAlert:

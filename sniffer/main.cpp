@@ -57,7 +57,8 @@ void processFrame(char *buffer, int buflen)
                 char sender_ip[16];
                 snprintf(sender_mac, 18, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", arph->sha[0], arph->sha[1], arph->sha[2], arph->sha[3], arph->sha[4], arph->sha[5]);
                 snprintf(sender_ip, 16, "%d.%d.%d.%d", arph->spa[0], arph->spa[1], arph->spa[2], arph->spa[3]);
-                // TODO: check for ARP spoofing
+                std::string mac(sender_mac);
+                std::string ip(sender_ip);
             }
         }
     }

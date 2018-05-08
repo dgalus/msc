@@ -26,6 +26,7 @@ public:
     unsigned int insertTCPSession(TCPSession session);
     unsigned int insertHTTPSite(HTTPSite site);
     unsigned int insertARP(std::string mac, std::string ip);
+    void insertArpSpoofingAlert(std::string ipAddr, std::string arpMac, std::string dbMac);
     void insertUDPSegments(std::vector<UDPSegment> segments);
     void insertICMPSegments(std::vector<ICMPSegment> segments);
     void insertCounters(Counters counters, std::string timestamp);
