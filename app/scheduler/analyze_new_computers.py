@@ -12,13 +12,12 @@ def analyze_new_computers():
                   config["database"]["db"])
     
     computers = db.session.query(Computer).filter(Computer.most_connected_ports == None).all()
-    print(computers)
-    #for c in computers:
-        #c.open_ports = tcp_connect_scan(c.ip)
-        #c.closed_ports = tcp_fin_scan(c.ip)
-        #c.last_port_scan = datetime.datetime.now()
-        #most_connected_ports = {}
-        #for i in range(1, 65536):
-            #most_connected_ports[str(i)] = 0
-        #c.most_connected_ports = str(most_connected_ports)
-    #db.session.commit()
+    for c in computers:
+        c.open_ports = tcp_connect_scan(c.ip)
+        c.closed_ports = tcp_fin_scan(c.ip)
+        c.last_port_scan = datetime.datetime.now()
+        most_connected_ports = {}
+        for i in range(1, 65536):
+            most_connected_ports[str(i)] = 0
+        c.most_connected_ports = str(most_connected_ports)
+    db.session.commit()

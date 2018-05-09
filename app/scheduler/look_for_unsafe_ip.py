@@ -26,7 +26,7 @@ def look_for_unsafe_ip():
         if not is_local_address(u.ip_src):
             addresses_to_check.append(u.ip_src)
         if not is_local_address(u.ip_dst):
-            addresses_to_check(u.ip_dst)
+            addresses_to_check.append(u.ip_dst)
     unsafe_ip = db.session.query(UnsafeIP.ip).all()
     for addr in addresses_to_check:
         if addr in unsafe_ip:

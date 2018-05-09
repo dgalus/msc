@@ -91,7 +91,7 @@ def analyze_counters():
                 avg_rst = mean(lfc_rst)
             fc = FakeCounter(new_tcp_syn, avg_syn, new_tcp_rst, avg_rst, last_counters[-1].udp)
             db.session.add(fc)
-            db.session.commit(fc)
+            db.session.commit()
         else:
             new_tcp_syn = last_counters[-1].tcp_syn
             new_tcp_rst = last_counters[-1].tcp_rst
@@ -106,4 +106,4 @@ def analyze_counters():
             avg_rst = s_rst/(len(lfc_rst) + 1)
             fc = FakeCounter(new_tcp_syn, avg_syn, new_tcp_rst, avg_rst, last_counters[-1].udp)
             db.session.add(fc)
-            db.session.commit(fc)
+            db.session.commit()

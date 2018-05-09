@@ -24,6 +24,7 @@ def add_computers_and_last_active():
         if is_local_address(session.ip_dst):
             ips_to_check.append(session.ip_dst)
     ips_to_check = set(ips_to_check)
+    print(ips_to_check)
     
     computers_set = set([i.ip for i in computers])
     computers_to_add = []

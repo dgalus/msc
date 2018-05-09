@@ -9,6 +9,6 @@
 
 #print(DomainAnalysis.analyze('nereus1.radio.opole.pl'))
 
-from app.scheduler import analyze_new_computers
+from app.scan import *
 
-analyze_new_computers()
+print(tcp_connect_scan("10.200.240.151"))
