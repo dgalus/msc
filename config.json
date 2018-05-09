@@ -7,7 +7,7 @@
     },
     "persist_time_days" : "30",
     "local_networks" : [
-        "192.168.1.0/24"
+        "10.200.240.0/24"
     ],
     "notifications" : {
         "mail" : {

@@ -29,8 +29,8 @@ def analyze_counters():
                   config["database"]["host"], 
                   config["database"]["port"], 
                   config["database"]["db"])
-    last_counters = db.session.query(Counter).order_by(Counter.id.desc()).limit(1000)
-    last_fake_counters = db.session.query(FakeCounter).order_by(FakeCounter.id.desc()).limit(1000)
+    last_counters = db.session.query(Counter).order_by(Counter.id.desc()).limit(1000).all()
+    last_fake_counters = db.session.query(FakeCounter).order_by(FakeCounter.id.desc()).limit(1000).all()
     lfc_syn = []
     lfc_rst = []
     lc_l2traffic = []

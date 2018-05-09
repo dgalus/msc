@@ -13,7 +13,7 @@ def fix_unknown_geolocations():
                   config["database"]["db"]) 
     tcp_sessions = db.session.query(TCPSession).filter_by(remote_geolocation='UNKNOWN').all()
     for session in tcp_sessions:
-        if hosts_in_the_same_netowrk(config["local_networks"], session.ip_src, session.ip_dst):
+        if is_local_address(session.ip_src) and is_local_address(session.ip_dst):
             session.remote_geolocation = "LOCAL"
         else:
             if is_local_address(session.ip_src):
