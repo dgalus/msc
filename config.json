@@ -39,7 +39,9 @@
             "high_traffic_amount_higher" : 60,
             "high_traffic_amount_lower" : 20,
             "unsafe_ip_detected" : 70,
-            "abnormal_activity_time" : 20
+            "abnormal_activity_time" : 20,
+            "new_geolocation_detected": 30, 
+            "new_destination_port_detected" : 20
         }
     }
 }

@@ -39,9 +39,42 @@ def rebuild_computer_behavior():
             if (aut[weekdays[weekday]][minute]/m) < config['system']['active_use_times_threshold']:
                 generate_alert(AlertType.ABNORMAL_ACTIVITY_TIME, AbnormalActivityTimeAlert(c.ip, current_time), config["system"]["ranks"]["abnormal_activity_time"])
             
-            # geolocations (+admin pending request)
-            
-            
-            # ports (+ admin pending request)
-            
+            # geolocations
+            computer_geolocations = json.loads(c.geolocations)["geolocations"]
+            geolocations = []
+            for s in sess:
+                geolocations.append(s.remote_geolocation)
+            for g in geolocations:
+                if g not in computer_geolocations:
+                    computer_geolocations.append(g)
+                if g not in config["system"]["safe_geolocations"]:
+                    generate_alert(AlertType.NEW_GEOLOCATION_DETECTED, NewGeolocationDetectedAlert(c.ip, g), config["system"]["ranks"]["new_geolocation_detected"])
+                    ansgt = AddNewSafeGeolocationTask(g)
+                    apt = AdminPendingTask(str(ansgt))
+                    db.session.add(apt)
+            d = {}
+            d["geolocations"] = computer_geolocations
+            c.geolocations = json.dumps(d)
+                    
+            # ports
+            computer_ports = json.loads(c.most_connected_ports)["ports"]
+            for s in sess:
+                if s.ip_src == c.ip:
+                    ip_src = c.ip
+                    ip_dst = s.ip_dst
+                    port = s.dst_port
+                else:
+                    ip_src = s.ip_dst
+                    ip_dst = s.ip_src
+                    port = s.src_port
+                if port not in computer_ports:
+                    computer_ports.append(port)
+                if port not in config["system"]["safe_ports"]:
+                    generate_alert(AlertType.NEW_DESTINATION_PORT_DETECTED, NewDestinationPortDetectedAlert(ip_src, ip_dst, port), config["system"]["ranks"]["new_destination_port_detected"])
+                    anspt = AddNewSafePortTask(port)
+                    apt = AdminPendingTask(str(anspt))
+                    db.session.add(apt)
+            d = {}
+            d["ports"] = computer_ports
+            c.most_connected_ports = json.dumps(d)
     db.session.commit()    

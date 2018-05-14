@@ -14,6 +14,8 @@ class AlertType(Enum):
     HIGH_TRAFFIC_AMOUNT = 6
     UNSAFE_IP_DETECTED = 7
     ABNORMAL_ACTIVITY_TIME = 8
+    NEW_GEOLOCATION_DETECTED = 9
+    NEW_DESTINATION_PORT_DETECTED = 10
     
     def __str__(self):
         return self.name
@@ -78,3 +80,22 @@ class AbnormalActivityTimeAlert:
         
     def __str__(self):
         return "Abnormal activity time on the workstation with IP " + self.ip + " detected at " + timestamp.strftime("%Y-%m-%d %H:%M:%S") + "."
+    
+    
+class NewGeolocationDetectedAlert:
+    def __init__(self, ip, geolocation):
+        self.ip = ip
+        self.geolocation = geolocation
+        
+    def __str__(self):
+        return "Computer " + self.ip + " established just now connection to new geolocation: + " +self.geolocation + " which may be unsafe."
+    
+    
+class NewDestinationPortDetectedAlert:
+    def __init__(self, src_ip, dst_ip, port):
+        self.src_ip = src_ip
+        self.dst_ip = dst_ip
+        self.port = port
+        
+    def __str__(self):
+        return "Computer " + self.ip +" established just now connection with " + self.dst_ip + " on port " + str(port) + " which is not marked as safe."

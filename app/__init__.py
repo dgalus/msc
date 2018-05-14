@@ -1,5 +1,6 @@
 from .alert import *
 from .anomaly_detection import *
+from .admin_pending_task import *
 from .banlist import *
 from .bayes import *
 from .behaviour_models import *
