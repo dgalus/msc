@@ -53,18 +53,18 @@ def analyze_counters():
                         if is_outlier_by_last(lc_l2traffic[:-1], lc_l2traffic[-1]):
                             ht = HighTrafficAmountAlert()
                             if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
-                                rank = 60
+                                rank = config["system"]["ranks"]["high_traffic_amount_higher"]
                             else:
-                                rank = 20
+                                rank = config["system"]["ranks"]["high_traffic_amount_lower"]
                             generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
                 else:
                     # check short-term forecast
                     if is_outlier_by_last(lc_l2traffic[:-1], lc_l2traffic[-1]):
                         ht = HighTrafficAmountAlert()
                         if mean(lc_l2traffic[:-1])*3 < lc_l2traffic[-1]:
-                            rank = 60
+                            rank = config["system"]["ranks"]["high_traffic_amount_higher"]
                         else:
-                            rank = 20
+                            rank = config["system"]["ranks"]["high_traffic_amount_lower"]
                         generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(ht), rank)
             # higher tcp_syn (fake_counters)
             if is_outlier(lfc_syn, last_counters[-1].tcp_syn):
@@ -84,7 +84,7 @@ def analyze_counters():
                 current_time = datetime.datetime.now()
                 two_min_ago = current_time - datetime.timedelta(minutes=2)
                 scanner_ip = db.session.query(TCPSession.ip_src).filter(TCPSession.last_segm_tstmp > two_min_ago).group_by(TCPSession.ip_src).order_by(func.count(TCPSession.ip_src).desc()).first()[0]
-                generate_alert(AlertType.TCP_FIN_SCAN, TcpFinScanAlert(scanner_ip), 60)
+                generate_alert(AlertType.TCP_FIN_SCAN, TcpFinScanAlert(scanner_ip), config["system"]["ranks"]["tcp_fin_scan"])
             else:
                 new_tcp_rst = last_counters[-1].tcp_rst
                 lfc_rst.append(last_counters[-1].tcp_rst)

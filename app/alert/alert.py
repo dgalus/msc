@@ -13,6 +13,7 @@ class AlertType(Enum):
     TCP_FIN_SCAN = 5
     HIGH_TRAFFIC_AMOUNT = 6
     UNSAFE_IP_DETECTED = 7
+    ABNORMAL_ACTIVITY_TIME = 8
     
     def __str__(self):
         return self.name
@@ -68,3 +69,12 @@ class UnsafeIPDetectedAlert:
         
     def __str__(self):
         return "Blacklisted IP (" + ip + ")  transmission detected."
+    
+    
+class AbnormalActivityTimeAlert:
+    def __init__(self, ip, timestamp):
+        self.ip = ip
+        self.timestamp = timestamp
+        
+    def __str__(self):
+        return "Abnormal activity time on the workstation with IP " + self.ip + " detected at " + timestamp.strftime("%Y-%m-%d %H:%M:%S") + "."

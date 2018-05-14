@@ -33,4 +33,4 @@ def look_for_unsafe_ip():
             alert_ip.append(addr)
     s_alert_ip = list(set(alert_ip))
     for aip in s_alert_ip:
-        generate_alert(AlertType.UNSAFE_IP_DETECTED, UnsafeIPDetectedAlert(aip), 30)
+        generate_alert(AlertType.UNSAFE_IP_DETECTED, UnsafeIPDetectedAlert(aip), config["system"]["ranks"]["unsafe_ip_detected"])
