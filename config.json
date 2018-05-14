@@ -7,7 +7,7 @@
     },
     "persist_time_days" : "30",
     "local_networks" : [
-        "10.200.240.0/24"
+        "192.168.1.0/24"
     ],
     "notifications" : {
         "mail" : {
@@ -25,6 +25,7 @@
         "host" : "127.0.0.1"
     },
     "system" : {
+        "active_use_times_threshold" : 0.1,
         "long_forecast_traffic_interval" : 1.7,
         "sigmas" : 4
     }
