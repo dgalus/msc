@@ -311,3 +311,14 @@ class Computer(base):
         l = [0] * 1440
         d = { "mon" : l, "tue" : l, "wed" : l, "thu" : l, "fri" : l, "sat" : l, "sun" : l }
         self.active_use_times = json.dumps(d)
+        
+        
+class GeolocationStatistics(base):
+    __tablename__ = 'geolocation_statistics'
+    id = Column(Integer, primary_key=True, nullable=False)
+    timestamp = Column(DateTime, nullable=False)
+    geolocation_statistics = Column(String, nullable=False)
+    
+    def __init__(self, timestamp, geolocation_statistics):
+        self.timestamp = timestamp
+        self.geolocation_statistics = geolocation_statistics

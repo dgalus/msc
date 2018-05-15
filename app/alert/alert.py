@@ -16,6 +16,7 @@ class AlertType(Enum):
     ABNORMAL_ACTIVITY_TIME = 8
     NEW_GEOLOCATION_DETECTED = 9
     NEW_DESTINATION_PORT_DETECTED = 10
+    ABNORMALLY_MANY_CONNECTIONS_TO_GEOLOCATION = 11
     
     def __str__(self):
         return self.name
@@ -99,3 +100,11 @@ class NewDestinationPortDetectedAlert:
         
     def __str__(self):
         return "Computer " + self.src_ip +" established just now connection with " + self.dst_ip + " on port " + str(self.port) + " which is not marked as safe."
+    
+    
+class AbnormallyManyConnectionsToGeolocation:
+    def __init__(self, geolocation):
+        self.geolocation = geolocation
+        
+    def __str__(self):
+        return "Abnormally many connections to geolocation: " + self.geolocation
