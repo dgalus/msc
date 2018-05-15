@@ -1,5 +1,5 @@
 from ..database import *
-from ..alert import generate_alert, AlertType, AbnormalActivityTimeAlert
+from ..alert import generate_alert, AlertType, AbnormalActivityTimeAlert, NewDestinationPortDetectedAlert, NewGeolocationDetectedAlert
 from ..utils import is_local_address
 import json
 import datetime
@@ -40,7 +40,10 @@ def rebuild_computer_behavior():
                 generate_alert(AlertType.ABNORMAL_ACTIVITY_TIME, AbnormalActivityTimeAlert(c.ip, current_time), config["system"]["ranks"]["abnormal_activity_time"])
             
             # geolocations
-            computer_geolocations = json.loads(c.geolocations)["geolocations"]
+            try:
+                computer_geolocations = json.loads(c.geolocations)["geolocations"]
+            except:
+                computer_geolocations = []
             geolocations = []
             for s in sess:
                 geolocations.append(s.remote_geolocation)
@@ -57,7 +60,10 @@ def rebuild_computer_behavior():
             c.geolocations = json.dumps(d)
                     
             # ports
-            computer_ports = json.loads(c.most_connected_ports)["ports"]
+            try:
+                computer_ports = json.loads(c.most_connected_ports)["ports"]
+            except:
+                computer_ports = []
             for s in sess:
                 if s.ip_src == c.ip:
                     ip_src = c.ip
