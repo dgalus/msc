@@ -42,6 +42,12 @@
             "abnormal_activity_time" : 20,
             "new_geolocation_detected": 30, 
             "new_destination_port_detected" : 20
+        },
+        "bayes" : {
+            "init_prob_spam" : 0.5,
+            "occurence_threshold" : 10,
+            "score_threshold" : 0.75,
+            "phrase_length" : 1
         }
     }
 }
