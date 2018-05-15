@@ -9,7 +9,7 @@ def is_bayes_safe(contents):
     config = json.load(open("config.json"))
     
     filename = "mytest/test.txt"
-    soup = BeautifulSoup(contents, "html5lib")
+    soup = BeautifulSoup(contents, "html")
     for script in soup(["script", "style"]):
         script.decompose()
         

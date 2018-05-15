@@ -1,5 +1,6 @@
 from ..database import *
 from ..alert import generate_alert, AlertType, AbnormalActivityTimeAlert, NewDestinationPortDetectedAlert, NewGeolocationDetectedAlert
+from ..admin_pending_task import AddNewSafeGeolocationTask, AddNewSafePortTask
 from ..utils import is_local_address
 import json
 import datetime
@@ -51,7 +52,7 @@ def rebuild_computer_behavior():
                 if g not in computer_geolocations:
                     computer_geolocations.append(g)
                 if g not in config["system"]["safe_geolocations"]:
-                    generate_alert(AlertType.NEW_GEOLOCATION_DETECTED, NewGeolocationDetectedAlert(c.ip, g), config["system"]["ranks"]["new_geolocation_detected"])
+                    generate_alert(AlertType.NEW_GEOLOCATION_DETECTED, str(NewGeolocationDetectedAlert(c.ip, g)), config["system"]["ranks"]["new_geolocation_detected"])
                     ansgt = AddNewSafeGeolocationTask(g)
                     apt = AdminPendingTask(str(ansgt))
                     db.session.add(apt)
@@ -76,7 +77,7 @@ def rebuild_computer_behavior():
                 if port not in computer_ports:
                     computer_ports.append(port)
                 if port not in config["system"]["safe_ports"]:
-                    generate_alert(AlertType.NEW_DESTINATION_PORT_DETECTED, NewDestinationPortDetectedAlert(ip_src, ip_dst, port), config["system"]["ranks"]["new_destination_port_detected"])
+                    generate_alert(AlertType.NEW_DESTINATION_PORT_DETECTED, str(NewDestinationPortDetectedAlert(ip_src, ip_dst, port)), config["system"]["ranks"]["new_destination_port_detected"])
                     anspt = AddNewSafePortTask(port)
                     apt = AdminPendingTask(str(anspt))
                     db.session.add(apt)

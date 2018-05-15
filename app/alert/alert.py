@@ -88,7 +88,7 @@ class NewGeolocationDetectedAlert:
         self.geolocation = geolocation
         
     def __str__(self):
-        return "Computer " + self.ip + " established just now connection to new geolocation: + " +self.geolocation + " which may be unsafe."
+        return "Computer " + self.ip + " established just now connection to new geolocation: " + self.geolocation + " which may be unsafe."
     
     
 class NewDestinationPortDetectedAlert:
@@ -98,4 +98,4 @@ class NewDestinationPortDetectedAlert:
         self.port = port
         
     def __str__(self):
-        return "Computer " + self.ip +" established just now connection with " + self.dst_ip + " on port " + str(port) + " which is not marked as safe."
+        return "Computer " + self.src_ip +" established just now connection with " + self.dst_ip + " on port " + str(self.port) + " which is not marked as safe."
