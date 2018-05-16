@@ -86,7 +86,7 @@ def analyze_counters():
                         generate_alert(AlertType.HIGH_TRAFFIC_AMOUNT, str(HighTrafficAmountAlert()), config["system"]["ranks"]["high_traffic_amount"])
                     break
     
-    # TCP Syn
+    # TCP Syn / syn-flood
     differences_increase = []
     if len(lfc_syn) > 3:
         test_val = real_syn[-1]
@@ -159,7 +159,6 @@ def analyze_counters():
         fake_tcp_rst = real_rst[-1]
         fake_tcp_rst_avg = mean(real_rst)
     
-    # fake counters push
     fc = FakeCounter(fake_tcp_syn, fake_tcp_syn_avg, fake_tcp_rst, fake_tcp_rst_avg, counters[-1].udp)
     db.session.add(fc)
     db.session.commit()
