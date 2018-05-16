@@ -11,5 +11,31 @@
             </div>
         </div>
 
+        <div class="col-lg-12">
+          <div class="card">
+              <div class="card-header">
+                  <strong class="card-title">Layer 2 traffic in last 24h</strong>
+              </div>
+              <div class="card-body">
+                <center>
+                    <img src="{{ url_for('static', filename=l2_traffic) }}" width="60%"/>
+                </center>
+              </div>
+          </div>
+      </div>
+      
+      <div class="col-lg-12">
+          <div class="card">
+              <div class="card-header">
+                  <strong class="card-title">Layer 2 frames in last 24h</strong>
+              </div>
+              <div class="card-body">
+                <center>
+                    <img src="{{ url_for('static', filename=l2_frames) }}" width="60%"/>
+                </center>
+              </div>
+          </div>
+      </div>
+
 
 {% endblock %}

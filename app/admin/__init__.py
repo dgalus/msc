@@ -23,6 +23,8 @@ app.config.update(dict(
     SECRET_KEY = "secret",
 ))
 
+UPLOAD_FOLDER = 'app/admin/static/img/'
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.session_protection = "strong"
