@@ -14,7 +14,7 @@
             <div class="card text-white bg-flat-color-1">
                 <div class="card-body pb-0">
                     <h4 class="mb-0">
-                        <span class="count">10468</span>
+                        <span class="count">{{ sessions }}</span>
                     </h4>
                     <p class="text-light">Active TCP sessions</p>
                 </div>
@@ -24,7 +24,7 @@
             <div class="card text-white bg-flat-color-3">
                 <div class="card-body pb-0">
                     <h4 class="mb-0">
-                        <span class="count">10468 </span> kbps
+                        <span class="count">{{ l2_traffic }} </span> kbps
                     </h4>
                     <p class="text-light">Current layer-2 traffic</p>
                 </div>
@@ -34,7 +34,7 @@
             <div class="card text-white bg-flat-color-4">
                 <div class="card-body pb-0">
                     <h4 class="mb-0">
-                        <span class="count">5</span>
+                        <span class="count">{{ alerts }}</span>
                     </h4>
                     <p class="text-light">Alerts</p>
                 </div>
@@ -44,7 +44,7 @@
             <div class="card text-white bg-flat-color-5">
                 <div class="card-body pb-0">
                     <h4 class="mb-0">
-                        <span class="count">5</span>
+                        <span class="count">{{ apt }}</span>
                     </h4>
                     <p class="text-light">Pending admin tasks</p>
                 </div>
@@ -67,14 +67,48 @@
                       </tr>
                     </thead>
                     <tbody>
+                      {% for ct in current_tasks: %}
                       <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ ct['timestamp'] }}</td>
+                        <td>{{ ct['type'] }}</td>
+                        <td>{{ ct['description'] }}</td>
                         <td>
-                            <a type="button" class="btn btn-primary" href="#">Show details</a>
+                            <a type="button" class="btn btn-primary" href="#">YES</a>
+                            <a type="button" class="btn btn-danger" href="#">NO</a>
                         </td>
                       </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+              </div>
+          </div>
+        </div>
+          
+          
+        <div class="col-lg-12">
+          <div class="card">
+              <div class="card-header">
+                  <strong class="card-title">Archived admin tasks</strong>
+              </div>
+              <div class="card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Date - Time executed</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Decision</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for at in archived_tasks: %}
+                      <tr>
+                        <td>{{ at['finished'] }}</td>
+                        <td>{{ at['type'] }}</td>
+                        <td>{{ at['description'] }}</td>
+                        <td>{{ at['decision'] }}</td>
+                      </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
               </div>
