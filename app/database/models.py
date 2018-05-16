@@ -216,17 +216,6 @@ class FakeCounter(base):
         self.udp = udp
         
 
-class L2TrafficForecast(base):
-    __tablename__ = 'l2_traffic_forecast'
-    id = Column(Integer, primary_key=True, nullable=False)
-    timestamp = Column(DateTime, nullable=False)
-    forecast = Column(Integer, nullable=False)
-    
-    def __init__(self, timestamp, forecast):
-        self.timestamp = timestamp
-        self.forecast = forecast
-        
-
 class AdminPendingTask(base):
     __tablename__ = 'admin_pending_task'
     id = Column(Integer, primary_key=True, nullable=False)
