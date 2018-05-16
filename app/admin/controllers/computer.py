@@ -2,7 +2,8 @@ from .. import *
 
 @app.route('/computer/aliases', methods=['GET'])
 def aliases():
-    return render_template('computer/aliases.html')
+    computers = db.session.query(Computer).all()
+    return render_template('computer/aliases.html', computers=computers)
 
 @app.route('/computer/most_visited', methods=['GET'])
 def most_visited():
