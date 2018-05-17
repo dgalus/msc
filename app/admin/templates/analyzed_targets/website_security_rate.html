@@ -10,6 +10,101 @@
                 </div>
             </div>
         </div>
+        
+        {% for s in sites: %}
+        
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <strong class="card-title">{{ s['domain'] }}</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="typo-headers">
+                                <h2 class="pb-2 display-5">{{ s['domain'] }}</h2>
+                                <h4 class="pb-2 display-5">IP: {{ s['ip'] }}</h4>
+                                <h4 class="pb-2 display-5">Geolocation: {{ s['geolocation'] }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="typo-headers">
+                                <h4 class="pb-2 display-5">Securiy rate: {{ s['rank'] }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                              
+                    <div class="vue-lists">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Visited URLs:</h4>
+                                <ul>
+                                    {% for u in s['urls'] %}
+                                        <li>{{ u }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if s['is_blacklisted'] %}
+                    <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                        <span class="badge badge-pill badge-danger">DANGER</span>
+                        This site is blacklisted! 
+                    </div>
+                    {% endif %}
+                    
+                    {% if not s['bayes_safe'] %}
+                    <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                        <span class="badge badge-pill badge-danger">DANGER</span>
+                        This site may be spam! (According the naive Bayes classifier)
+                    </div>
+                    {% endif %}
+                    
+                    {% if s['https']: %}
+                        <div class="alert alert-success" role="alert">
+                            This site redirects to HTTPS!
+                        </div>
+                    {% else: %}
+                        <div class="alert alert-danger" role="alert">
+                            This site does not redirects to HTTPS!
+                        </div>
+                    {% endif %}
+                    
+                    {% if s['hsts']: %}
+                        <div class="alert alert-success" role="alert">
+                            This site uses HSTS header!
+                        </div>
+                    {% else: %}
+                        <div class="alert alert-warning" role="alert">
+                            This site does not use HSTS header!
+                        </div>
+                    {% endif %}
+                    
+                    {% if s['cors']: %}
+                        <div class="alert alert-success" role="alert">
+                            This site uses CORS header!
+                        </div>
+                    {% else: %}
+                        <div class="alert alert-warning" role="alert">
+                            This site does not use CORS header!
+                        </div>
+                    {% endif %}
+                    
+                    <div>
+                        {% if s['google_rank']: %}<b>Google rank:</b> {{ s['google_rank'] }}<br />{% endif %}
+                        {% if s['duckduckgo_rank']: %}<b>DuckDuckGo rank:</b> {{ s['duckduckgo_rank'] }}<br />{% endif %}
+                        <b>Last visited:</b> {{ s['last_visited'] }}<br />
+                        <b>Analyze timestamp:</b> {{ s['analyze_timestamp'] }}<br />
+                        <b>Mark as safe:</b> 
+                        <a type="button" class="btn btn-primary" href="#">YES</a>
+                        <a type="button" class="btn btn-danger" href="#">NO</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% endfor %}
 
 
 {% endblock %}
