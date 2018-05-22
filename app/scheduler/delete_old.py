@@ -42,9 +42,4 @@ def delete_old():
         db.session.delete(fc)
     db.session.commit()
     
-    traffic_forecast = db.session.query(L2TrafficForecast).filter(L2TrafficForecast.timestamp < timeout).all()
-    for tf in traffic_forecast:
-        db.session.delete(tf)
-    db.session.commit()
-    
     
