@@ -12,16 +12,11 @@ def read_file(filename):
             arr.append(int(val))
     return arr
 
-traffic = read_file(TCP_SYN_FILE)
-
 def simple_exp_smoothing(series, alpha):
     result = [series[0]]
     for n in range(1, len(series)):
         result.append(alpha*series[n] + (1-alpha)*result[n-1])
     return result[-1]
-
-def calculate_trend():
-    pass
 
 def get_biggest_increase_in_window(series):
     inc = 0
@@ -29,16 +24,7 @@ def get_biggest_increase_in_window(series):
         if i < len(series)-1:
             if series[i+1] - series[i] > inc:
                 inc = series[i+1] - series[i]
-    return inc
-
-def get_biggest_decrease_in_window(series):
-    inc = 0
-    for i in range(len(series)):
-        if i < len(series)-1:
-            if series[i] - series[i+1] > inc:
-                inc = series[i] - series[i+1]
-    return inc
-    
+    return inc  
 
 def sigmoid(a, b, x):
     try:
@@ -55,11 +41,9 @@ def sigmoidal():
     sigmoidal_threshold = 0.9
     elements = []
     sigm_res = []
-    # prognoza na sezon
     for i in range(season_length):
         st = traffic[4320:-2880+i]
         differences_increase = []
-        # jesli sa dane do prognozowania
         if len(st) > season_length:
             start_item = len(st) % season_length
             end_item = len(st) - 1
@@ -77,13 +61,6 @@ def sigmoidal():
                         print("ALERT")
                     print("zmierzone = " + str(traffic[-2880+i+1]) + "    |    prognoza = " + str(elements[-1]) + "    |     sigmoidal = " + str(sigm_res[-1]))
                     break
-    #_, ax = plt.subplots()
-    #ax.plot(range(0, 1440), traffic[-2880:-1440], linewidth=0.7, color='#df9292', alpha=1, label="Rzeczywisty ruch")
-    #ax.plot(range(0, 1440), elements, linewidth=0.7, color = '#539caf', alpha=1, label="Prognozowany ruch")
-    #ax.set_xlabel("Czas")
-    #ax.set_ylabel("Ilość segmentów TCP SYN")
-    #ax.legend(loc='best')
-    #plt.show()
-    #plt.clf()
-        
+                    
+traffic = read_file(TCP_SYN_FILE)
 sigmoidal()
