@@ -40,7 +40,8 @@
             "abnormal_activity_time" : 20,
             "new_geolocation_detected": 30, 
             "new_destination_port_detected" : 20,
-            "abnormally_many_connections_to_geolocation" : 60
+            "abnormally_many_connections_to_geolocation" : 60,
+            "new_open_port_on_host_detected": 30
         },
         "bayes" : {
             "init_prob_spam" : 0.5,

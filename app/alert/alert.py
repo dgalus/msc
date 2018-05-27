@@ -17,6 +17,7 @@ class AlertType(Enum):
     NEW_GEOLOCATION_DETECTED = 9
     NEW_DESTINATION_PORT_DETECTED = 10
     ABNORMALLY_MANY_CONNECTIONS_TO_GEOLOCATION = 11
+    NEW_OPEN_PORT_ON_HOST_DETECTED = 12
     
     def __str__(self):
         return self.name
@@ -108,3 +109,12 @@ class AbnormallyManyConnectionsToGeolocation:
         
     def __str__(self):
         return "Abnormally many connections to geolocation: " + self.geolocation
+    
+    
+class NewOpenPortOnHostDetected:
+    def __init__(self, ip, port):
+        self.ip = ip
+        self.port = port
+        
+    def __str__(self):
+        return "New open port (" + str(self.port) + ") detected on " + self.ip + "."
