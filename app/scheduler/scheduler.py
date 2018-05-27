@@ -14,6 +14,7 @@ from .analyze_new_computers import analyze_new_computers
 from .rebuild_computer_behavior import rebuild_computer_behavior
 from .execute_admin_tasks import execute_admin_tasks
 from .create_geolocation_statistics import create_geolocation_statistics
+from .analyze_geolocations import analyze_geolocations
 
 class Scheduler:
     @staticmethod
@@ -28,7 +29,8 @@ class Scheduler:
         schedule.every(1).minutes.do(rebuild_computer_behavior)
         schedule.every(2).minutes.do(execute_admin_tasks)
         schedule.every(10).minutes.do(analyze_new_computers)
-        schedule.every(1).hour.do(create_geolocation_statistics)
+        schedule.every(1).hours.do(create_geolocation_statistics)
+        schedule.every(1).hours.do(analyze_geolocations)
         schedule.every(1).day.do(delete_old)
         schedule.every(1).day.do(download_banlists)
         

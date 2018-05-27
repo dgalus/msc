@@ -10,3 +10,4 @@ from .analyze_new_computers import analyze_new_computers
 from .rebuild_computer_behavior import rebuild_computer_behavior
 from .execute_admin_tasks import execute_admin_tasks
 from .create_geolocation_statistics import create_geolocation_statistics
+from .analyze_geolocations import analyze_geolocations
