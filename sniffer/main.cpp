@@ -59,6 +59,14 @@ void processFrame(char *buffer, int buflen)
                 snprintf(sender_ip, 16, "%d.%d.%d.%d", arph->spa[0], arph->spa[1], arph->spa[2], arph->spa[3]);
                 std::string mac(sender_mac);
                 std::string ip(sender_ip);
+                for(unsigned int i = 0; i < pc->arpTable.size(); i++)
+                {
+                    if(pc->arpTable.at(i).first == ip)
+                        if(pc->arpTable.at(i).second != mac)
+                            pc->pushArpSpoofingAlert(ip, mac, pc->arpTable.at(i).second);
+                    return;
+                }
+                pc->pushARP(mac, ip);
             }
         }
     }

@@ -108,6 +108,11 @@ void PostgreSQLCache::pushARP(std::string mac, std::string ip)
     arpMutex.unlock();
 }
 
+void PostgreSQLCache::pushArpSpoofingAlert(std::string ipAddr, std::string arpMac, std::string dbMac)
+{
+    db->insertArpSpoofingAlert(ipAddr, arpMac, dbMac);
+}
+
 bool PostgreSQLCache::isDomainSafe(std::string &domain)
 {
     if(std::find(unsafeDomains.begin(), unsafeDomains.end(), domain) != unsafeDomains.end())
