@@ -24,11 +24,13 @@ public:
     void pushUDPSegment(UDPSegment segment);
     void pushHTTP(HTTPSite site);
     void pushARP(std::string mac, std::string ip);
+    void pushArpSpoofingAlert(std::string ipAddr, std::string arpMac, std::string dbMac);
     bool isDomainSafe(std::string& domain);
     bool isURLSafe(std::string& url);
     bool isIPSafe(std::string& ip);
     Counters* c;
     std::mutex counterMutex;
+    std::vector<std::pair<std::string, std::string>> arpTable;
 
 private:
     unsigned int getTCPSessionId(TCPSessionMin sessionData, TCPSegment* segment);
@@ -57,7 +59,6 @@ private:
     std::vector<std::string> unsafeDomains;
     std::vector<std::string> unsafeIPs;
     std::vector<std::pair<TCPSessionMin, unsigned int>> activeTCPSessions;
-    std::vector<std::pair<std::string, std::string>> arpTable;
     std::vector<unsigned int> sessionsToClose;
 };
 

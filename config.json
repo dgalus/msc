@@ -1,5 +1,4 @@
 {
-    "timezone" : "+01:00",
     "admin_panel" : {
         "username" : "admin",
         "password" : "21232f297a57a5a743894a0e4a801fc3",
@@ -26,7 +25,6 @@
     },
     "system" : {
         "active_use_times_threshold" : 0.1,
-        "long_forecast_traffic_interval" : 1.7,
         "safe_geolocations" : ["UNKNOWN", "LOCAL", "EN", "IE", "DE", "CZ", "PL", "US"],
         "safe_ports" : [20, 21, 22, 53, 80, 443],
         "ranks" : {
