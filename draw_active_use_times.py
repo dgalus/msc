@@ -7,8 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 
-#start_hour = 7
-#end_hour = 16
+start_hour = 7
+end_hour = 16
 
 config = json.load(open("config.json"))
 db = Database(config["database"]["user"], 
@@ -17,7 +17,7 @@ db = Database(config["database"]["user"],
               config["database"]["port"], 
               config["database"]["db"])
 
-c = db.session.query(Computer).filter(Computer.ip == "192.168.1.17").first()
+c = db.session.query(Computer).filter(Computer.ip == "10.200.240.151").first()
 aut = json.loads(c.active_use_times)
 
 #for i in ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]:
