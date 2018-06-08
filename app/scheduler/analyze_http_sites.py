@@ -51,8 +51,10 @@ def analyze_http_sites():
             s.cors = True
         else:
             s.cors = False
-        
-        s.bayes_safe = is_bayes_safe(r.text)
+        try:
+            s.bayes_safe = is_bayes_safe(r.text)
+        except:
+            s.bayes_safe = True
         if s.is_admin_safe:
             s.rank = 100
         else:
