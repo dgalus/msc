@@ -33,8 +33,10 @@
                         <td>[{{ a['alert_type'] }}] {{ a['description'] }}</td>
                         <td>{{ a['rank'] }}%</td>
                         <td>
-                            <a type="button" class="btn btn-primary" href="#">Mark as viewed</a>
-                            <!--<a type="button" class="btn btn-danger" href="#">Delete</a>-->
+                            <form method="post" action="/mark_alert_as_viewed">
+                                <input type="hidden" name="alert_id" value="{{ a['id'] }}" />
+                                <input type="submit" class="btn btn-primary" value="Mark as viewed" />
+                            </form>
                         </td>
                       </tr>
                       {% endfor %}
