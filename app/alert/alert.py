@@ -81,7 +81,7 @@ class AbnormalActivityTimeAlert:
         self.timestamp = timestamp
         
     def __str__(self):
-        return "Abnormal activity time on the workstation with IP " + self.ip + " detected at " + timestamp.strftime("%Y-%m-%d %H:%M:%S") + "."
+        return "Abnormal activity time on the workstation with IP " + self.ip + " detected at " + self.timestamp.strftime("%Y-%m-%d %H:%M:%S") + "."
     
     
 class NewGeolocationDetectedAlert:

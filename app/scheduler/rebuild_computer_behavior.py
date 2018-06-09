@@ -38,7 +38,7 @@ def rebuild_computer_behavior():
                 arr.extend(aut[l])
             m = max(arr)
             if (aut[weekdays[weekday]][minute]/m) < config['system']['active_use_times_threshold']:
-                generate_alert(AlertType.ABNORMAL_ACTIVITY_TIME, AbnormalActivityTimeAlert(c.ip, current_time), config["system"]["ranks"]["abnormal_activity_time"])
+                generate_alert(AlertType.ABNORMAL_ACTIVITY_TIME, str(AbnormalActivityTimeAlert(c.ip, current_time)), config["system"]["ranks"]["abnormal_activity_time"])
             
             # geolocations
             try:
