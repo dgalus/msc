@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+
+        <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>Website security rate</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% for c in computers: %}
+        
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <strong class="card-title">{{ c["ip"] }}</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="typo-headers">
+                                <h2 class="pb-2 display-5">{{ c["ip"] }}</h2>
+                                {% if c["alias"] %}<h4 class="pb-2 display-5">Alias: {{ c["alias"] }}</h4>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <b>Visited geolocations:</b> {{ c["geolocations"] }}<br />
+                        <b>Open ports:</b> {{ c["open_ports"] }}<br />
+                        <b>Closed ports:</b> {{ c["closed_ports"] }}<br />
+                        <b>Most connected ports:</b> {{ c["most_connected"] }}<br />
+                        <b>Last active:</b> {{ c["last_active"] }}<br />
+                        <b>Last ping response:</b> {{ c["last_ping"] }}<br />
+                        <b>Last port scan:</b> {{ c["last_port_scan"] }}<br /><br />
+                        <a type="button" class="btn btn-primary" href="#">View activity time</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% endfor %}
+
+
+{% endblock %}
