@@ -26,8 +26,8 @@ def analyze_geolocations():
                     dict_val = all_last_max_values.get(s["geolocation"], 0)
                     if s["perc"] > dict_val:
                         all_last_max_values[s["geolocation"]] = s["perc"]
+            print(all_last_max_values)
             for geolocation, perc in current_values.items():
                 if perc/2 > all_last_max_values.get(geolocation, 0):
-                    print("ERR: " + geolocation)
                     amc = AbnormallyManyConnectionsToGeolocation(geolocation)
                     generate_alert(AlertType.ABNORMALLY_MANY_CONNECTIONS_TO_GEOLOCATION, str(amc), config["system"]["ranks"]["abnormally_many_connections_to_geolocation"])
