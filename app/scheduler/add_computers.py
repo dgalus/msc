@@ -1,5 +1,6 @@
 from ..database import *
 from ..utils import is_local_address
+from ..alert import generate_alert, AlertType, NewHostDetectedAlert
 import json
 import datetime
 
@@ -30,6 +31,7 @@ def add_computers_and_last_active():
     computers_to_add = []
     for ip in ips_to_check:
         if ip not in computers_set:
+            generate_alert(AlertType.NEW_HOST_DETECTED, str(NewHostDetectedAlert(ip)), config["system"]["ranks"]["new_host_detected"])
             db.session.add(Computer(ip))
     db.session.commit()
     

@@ -38,7 +38,7 @@ class NewHostDetectedAlert:
         self.ip_addr = ip_addr
         
     def __str__(self):
-        return "New host detected: " + ip_addr + "."
+        return "New host detected: " + self.ip_addr + "."
     
     
 class SynFloodAlert:
