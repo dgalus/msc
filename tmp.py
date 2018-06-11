@@ -11,15 +11,16 @@ from sqlalchemy import and_
               #config["database"]["port"], 
               #config["database"]["db"])
 
-#ts = TCPSession("10.200.240.191", 59382, "10.200.240.1", 80, True, datetime.datetime.now(), datetime.datetime.now(), "LOCAL")
+#ts = TCPSession("192.168.1.40", 59382, "192.168.1.17", 7788, True, datetime.datetime.now(), datetime.datetime.now(), "LOCAL")
 #db.session.add(ts)
 #db.session.commit()
  
-#ts = db.session.query(TCPSession).filter(TCPSession.last_segm_tstmp > (datetime.datetime.now() - datetime.timedelta(hours=10))).first()
+#ts = db.session.query(TCPSession).filter(TCPSession.last_segm_tstmp > (datetime.datetime.now() - datetime.timedelta(hours=1))).first()
 
 #segm = TCPSegment("SYN", 46, ts.last_segm_tstmp, 1, ts.id)
 #db.session.add(segm)
 #db.session.commit()
 
-#add_computers_and_last_active()
+add_computers_and_last_active()
+#analyze_new_computers()
 rebuild_computer_behavior()
