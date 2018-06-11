@@ -30,4 +30,8 @@ def analyze_geolocations():
             for geolocation, perc in current_values.items():
                 if perc/2 > all_last_max_values.get(geolocation, 0):
                     amc = AbnormallyManyConnectionsToGeolocation(geolocation)
-                    generate_alert(AlertType.ABNORMALLY_MANY_CONNECTIONS_TO_GEOLOCATION, str(amc), config["system"]["ranks"]["abnormally_many_connections_to_geolocation"])
+                    generate_alert(
+                        AlertType.ABNORMALLY_MANY_CONNECTIONS_TO_GEOLOCATION, 
+                        str(amc), 
+                        config["system"]["ranks"]["abnormally_many_connections_to_geolocation"]
+                    )
