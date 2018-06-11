@@ -18,7 +18,10 @@ def scan_ports():
     minute_ago = current_time - datetime.timedelta(minutes=1)
     week_ago = current_time - datetime.timedelta(days=7)
     
-    computers = db.session.query(Computer).filter(and_(Computer.last_port_scan < week_ago, Computer.last_ping_response_timestamp > minute_ago)).all()
+    computers = db.session.query(Computer).filter(and_(
+            Computer.last_port_scan < week_ago, 
+            Computer.last_ping_response_timestamp > minute_ago
+        )).all()
     for c in computers:
         old_open_ports = list(ast.literal_eval(c.open_ports))
         new_open_ports = tcp_connect_scan(c.ip)
@@ -30,7 +33,8 @@ def scan_ports():
         if len(new_open_ports) > 0:
             for port in new_open_ports:
                 nop = NewOpenPortOnHostDetected(c.ip, port)
-                generate_alert(AlertType.NEW_OPEN_PORT_ON_HOST_DETECTED, str(nop), config["system"]["ranks"]["new_open_port_on_host_detected"])
+                generate_alert(AlertType.NEW_OPEN_PORT_ON_HOST_DETECTED, str(nop), 
+                    config["system"]["ranks"]["new_open_port_on_host_detected"])
         c.open_ports = list(set(new_open_ports + old_open_ports))
         c.closed_ports = new_closed_ports
         c.last_port_scan = datetime.datetime.now()
