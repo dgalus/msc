@@ -11,5 +11,47 @@
             </div>
         </div>
 
+        <div class="col-lg-12">
+          <div class="card">
+              <div class="card-header">
+                  <strong class="card-title">LAN</strong>
+              </div>
+              <div class="card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Network</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>192.168.1.0/24</td>
+                        <td>
+                            <a type="button" class="btn btn-danger" href="#">Delete</a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                            <hr />
+                            <label class="form-control-label" for="password2">Add new network (example: 10.0.0.0/8):</label>
+                            <input id="port" name="port" class="form-control" type="text" /><br />
+                            <div class="col-lg-12">
+                                <div class="card">
+                                      <div>
+                                          <button id="save" type="submit" class="btn btn-lg btn-info btn-block">
+                                              <span>Zapisz</span>
+                                          </button>
+                                      </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
 
 {% endblock %}
