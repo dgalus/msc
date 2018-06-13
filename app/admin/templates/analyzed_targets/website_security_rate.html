@@ -97,8 +97,11 @@
                         <b>Last visited:</b> {{ s['last_visited'] }}<br />
                         <b>Analyze timestamp:</b> {{ s['analyze_timestamp'] }}<br />
                         <b>Mark as safe:</b> 
-                        <a type="button" class="btn btn-primary" href="#">YES</a>
-                        <a type="button" class="btn btn-danger" href="#">NO</a>
+                        {% if not s['is_admin_safe'] %}
+                            <a type="button" class="btn btn-primary" href="#">Mark as safe</a>
+                        {% else %}
+                            <a type="button" class="btn btn-danger" href="#">This site is now safe anymore</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

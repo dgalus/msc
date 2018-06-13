@@ -10,6 +10,11 @@ def blocked_domains():
     blocked_domains = db.session.query(UnsafeDomain).all()
     return render_template('analyzed_targets/blocked_domains.html', blocked_domains=blocked_domains)
 
+@app.route('/analyzed_targets/blocked_url', methods=['GET'])
+def blocked_url():
+    blocked_url = db.session.query(UnsafeURL).all()
+    return render_template('analyzed_targets/blocked_url.html', blocked_url=blocked_url)
+
 @app.route('/analyzed_targets/website_security_rate', methods=['GET'])
 def website_security_rate():
     sites_db = db.session.query(AnalyzedHTTPSite).filter(AnalyzedHTTPSite.analyze_timestamp != None).order_by(AnalyzedHTTPSite.domain.asc()).all()
@@ -33,7 +38,3 @@ def website_security_rate():
         d['rank'] = s.rank
         sites.append(d)
     return render_template('analyzed_targets/website_security_rate.html', sites=sites)
-
-@app.route('/analyzed_targets/geolocation', methods=['GET'])
-def geolocation():
-    return render_template('analyzed_targets/geolocation.html')
