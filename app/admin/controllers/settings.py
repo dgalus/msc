@@ -26,3 +26,8 @@ def websites():
 def zones():
     config = json.load(open("config.json"))
     return render_template('settings/zones.html')
+
+@app.route('/settings/system', methods=['GET'])
+def system():
+    config = json.load(open("config.json"))
+    return render_template('settings/system.html')

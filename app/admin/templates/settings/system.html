@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+{% block content %}
+
+        <div class="breadcrumbs">
+            <div class="col-sm-4">
+                <div class="page-header float-left">
+                    <div class="page-title">
+                        <h1>System settings</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      <form method="post" action="#">
+        <div class="col-lg-6">
+          <div class="card">
+              <div class="card-header">
+                  <strong class="card-title">System settings</strong>
+              </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="safe_geolocations">Safe geolocations:</label>
+                    <input id="safe_geolocations" name="safe_geolocations" class="form-control" value="UNKNOWN, LOCAL, EN, IE, DE, CZ, PL, US" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="safe_ports">Safe ports:</label>
+                    <input id="safe_ports" name="safe_ports" class="form-control" value="20, 21, 22, 53, 80, 443" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="active_use_times_threshold">Active use times threshold:</label>
+                    <input id="active_use_times_threshold" name="active_use_times_threshold" class="form-control" value="0.4" type="text" />
+                  </div>
+                </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header">
+                  <strong class="card-title">Naive Bayes classifier</strong>
+              </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="safe_geolocations">Initial SPAM probability:</label>
+                    <input id="safe_geolocations" name="safe_geolocations" class="form-control" value="0.5" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="safe_ports">Occurence threshold:</label>
+                    <input id="safe_ports" name="safe_ports" class="form-control" value="10" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="active_use_times_threshold">Score threshold:</label>
+                    <input id="active_use_times_threshold" name="active_use_times_threshold" class="form-control" value="0.75" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="active_use_times_threshold">Phrase length:</label>
+                    <input id="active_use_times_threshold" name="active_use_times_threshold" class="form-control" value="1" type="text" />
+                  </div>
+                </div>
+            </div>
+      </div>
+
+      <div class="col-lg-6">
+          <div class="card">
+              <div class="card-header">
+                  <strong class="card-title">Ranks</strong>
+              </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="safe_geolocations">ARP spoofing:</label>
+                    <input id="safe_geolocations" name="safe_geolocations" class="form-control" value="60" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="safe_ports">New host detected:</label>
+                    <input id="safe_ports" name="safe_ports" class="form-control" value="30" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="active_use_times_threshold">SYN-flood:</label>
+                    <input id="active_use_times_threshold" name="active_use_times_threshold" class="form-control" value="70" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="active_use_times_threshold">TCP SYN Scan</label>
+                    <input id="active_use_times_threshold" name="active_use_times_threshold" class="form-control" value="40" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="active_use_times_threshold">TCP FIN Scan</label>
+                    <input id="active_use_times_threshold" name="active_use_times_threshold" class="form-control" value="40" type="text" />
+                  </div>
+                </div>
+                <div class="card-body card-block">
+                  <div class="form-group">
+                    <label class="form-control-label" for="active_use_times_threshold">High traffic amount</label>
+                    <input id="active_use_times_threshold" name="active_use_times_threshold" class="form-control" value="60" type="text" />
+                  </div>
+                </div>
+          </div>
+      </div>
+
+            "high_traffic_amount" : 60,
+            "unsafe_ip_detected" : 70,
+            "abnormal_activity_time" : 20,
+            "new_geolocation_detected": 30, 
+            "new_destination_port_detected" : 20,
+            "abnormally_many_connections_to_geolocation" : 60,
+            "new_open_port_on_host_detected": 30
+        },
+        "traffic_amount_anomaly_detection_model" : {
+            "window_size" : 21,
+            "season_length" : 1440,
+            "sigmoid_threshold" : 0.9,
+            "alpha" : 0.9
+        }
+
+
+      <div class="col-lg-12">
+          <div class="card">
+                <div>
+                    <button id="save" type="submit" class="btn btn-lg btn-info btn-block">
+                        <span>Zapisz</span>
+                    </button>
+                </div>
+          </div>
+      </div>
+
+      </form>
+
+{% endblock %}

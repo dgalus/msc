@@ -40,3 +40,7 @@ def protocols():
 @app.route('/computer/active_use_times', methods=['GET'])
 def active_use_times():
     return render_template('computer/active_use_times.html')
+
+@app.route('/computer/test', methods=['GET'])
+def test():
+    return render_template('computer/test.html')

@@ -2,10 +2,22 @@ from .. import *
 import uuid
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
+from sqlalchemy import and_
 
-@app.route('/layer2/overall_traffic', methods=['GET'])
+@app.route('/layer2/overall_traffic', methods=['GET', 'POST'])
 def l2_overall_traffic():
-    res = db.session.query(Counter.l2_traffic, Counter.l2_frames).order_by(Counter.id.desc()).all()
+    if request.method == 'GET':
+        res = db.session.query(Counter.l2_traffic, Counter.l2_frames).order_by(Counter.id.desc()).all()
+    if request.method == 'POST':
+        try:
+            from_date = datetime.strptime(request.form['from'], '%Y-%m-%d %H:%M:%S')
+            to_date = datetime.strptime(request.form['to'], '%Y-%m-%d %H:%M:%S')
+            res = db.session.query(Counter.l2_traffic, Counter.l2_frames).filter(
+                and_(Counter.timestamp > from_date, Counter.timestamp < to_date)
+            ).order_by(Counter.id.desc()).all()
+        except:
+            res = db.session.query(Counter.l2_traffic, Counter.l2_frames).order_by(Counter.id.desc()).all()
     traffic = []
     frames = []
     for r in res:
@@ -16,6 +28,7 @@ def l2_overall_traffic():
         traffic = traffic[-season_length:]
     if len(frames) > season_length:
         frames = frames[-season_length:]
+        
         
     x = range(len(traffic))
     y = traffic
