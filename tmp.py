@@ -1,5 +1,6 @@
 from app.database import *
 from app.scheduler import *
+from app.email_sender import send_alerts
 import json
 import datetime
 from sqlalchemy import and_
@@ -21,6 +22,7 @@ from sqlalchemy import and_
 #db.session.add(segm)
 #db.session.commit()
 
-add_computers_and_last_active()
+#add_computers_and_last_active()
 #analyze_new_computers()
-rebuild_computer_behavior()
+#rebuild_computer_behavior()
+send_alerts()

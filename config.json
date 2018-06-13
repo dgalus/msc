@@ -10,9 +10,9 @@
     ],
     "notifications" : {
         "mail" : {
-            "sender" : "security@example.org",
-            "recipient" : ["admin@example.org"],
-            "smtp_server" : "example.org",
+            "sender" : "nbad@example.org",
+            "recipient" : ["user@example.org"],
+            "smtp_server" : "smtp.example.org",
             "smtp_port" : 25
         }
     },
