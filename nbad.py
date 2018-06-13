@@ -8,10 +8,14 @@ from app.scheduler import Scheduler
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--clear_db", action="store_true", help="Clear database")
-    parser.add_argument("-d", "--daemon", action="store_true", help="Run as daemon")
-    parser.add_argument("-g", "--initialize_geolocation", action="store_true", help="(Re-)Initialize geolocation module")
-    parser.add_argument("-u", "--initialize_unsafe", action="store_true", help="Initialize a new set of unsafe URLs, domains and IPs")
+    parser.add_argument("-c", "--clear_db", action="store_true", 
+			help="Clear database")
+    parser.add_argument("-d", "--daemon", action="store_true", 
+			help="Run as daemon")
+    parser.add_argument("-g", "--initialize_geolocation", action="store_true", 
+			help="(Re-)Initialize geolocation module")
+    parser.add_argument("-u", "--initialize_unsafe", action="store_true", 
+			help="Initialize a new set of unsafe URLs, domains and IPs")
 
     args = parser.parse_args()
     
